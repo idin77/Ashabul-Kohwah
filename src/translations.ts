@@ -201,6 +201,21 @@ export interface TranslationData {
     othersTitle: string;
     rightsReserved: string;
   };
+  chatWidget: {
+    launcherTooltip: string;
+    agentName: string;
+    agentRole: string;
+    agentStatus: string;
+    timeTag: string;
+    greetingText: string;
+    quickPill1: string;
+    quickPill2: string;
+    quickPill3: string;
+    quickPill4: string;
+    inputPlaceholder: string;
+    sendBtn: string;
+    footerNote: string;
+  };
 }
 
 export const translations: Record<Language, TranslationData> = {
@@ -314,6 +329,19 @@ export const translations: Record<Language, TranslationData> = {
           answerText:
             'Tentu saja! Mitra Bersih 24Jam menggunakan mesin pompa vakum modern bertekanan tinggi dengan selang penyedot spiral kedap udara (closed-circuit suction). Kotoran limbah langsung dialirkan masuk ke dalam tangki baja kedap tanpa tumpah dan tanpa menimbulkan polusi bau menyengat ke pemukiman tetangga Anda. Teknisi kami juga selalu membersihkan kembali area kerja hingga steril dan rapi.',
         },
+        {
+          id: 6,
+          question: 'Bagaimana langkah mudah (DIY) memeriksa dan mengidentifikasi sumbatan ringan pada saluran WC atau pipa rumah?',
+          answerText:
+            'Anda dapat melakukan identifikasi mandiri (DIY) dengan 5 langkah praktis sebelum memanggil jasa sedot WC:',
+          bullets: [
+            '1. Uji Aliran Siram (Drain Flow Test): Tuang 1 ember air untuk memeriksa apakah air surut lambat (sumbatan lokal) atau tertahan total.',
+            '2. Deteksi Suara Gelembung (Gurgling Test): Jika terdengar suara "gluk-gluk" di wastafel saat kloset disiram, sumbatan berada di pipa utama atau septic tank mulai penuh.',
+            '3. Bersihkan Saringan Floor Drain & U-Trap: Angkat kotoran rambut dan buih sabun yang kerap menyumbat di kedalaman 10–20 cm pertama.',
+            '4. Pembilasan Alami Soda Kue & Air Hangat: Tuang 1 cangkir baking soda dan cuka, diamkan 15 menit, lalu bilas air hangat untuk melunakkan lemak beku.',
+            '5. Gunakan Plunger Manual: Pompa karet beberapa kali. Jika air tetap meluap atau muncul bau busuk pekat, segera hubungi teknisi profesional Mitra Bersih 24 Jam.',
+          ],
+        },
       ],
     },
     trustIndicators: {
@@ -384,14 +412,32 @@ export const translations: Record<Language, TranslationData> = {
         {
           name: 'Siti Rahayu',
           location: 'Cikarang Barat',
-          text: '"Harga transparan, tidak menaikkan tarif di tengah pekerjaan. Petugasnya ramah dan bersih. Biaya sedot septic tank cikarang sangat murah. Terima kasih Mitra Bersih!"',
+          text: '"Harga transparan, tidak menaikkan tarif di tengah pekerjaan. Petugasnya ramah dan bersih. Biaya sedot septic tank cikarang sangat murah dan bergaransi. Terima kasih Mitra Bersih!"',
           avatar: 'S',
         },
         {
           name: 'Ahmad Hidayat',
-          location: 'Cikarang Pusat',
-          text: '"Sudah langganan untuk sedot limbah pabrik dan sedot grease trap di ruko saya di Jababeka. Selalu tepat waktu, armada bersih, bebas bau. Sangat membantu kelancaran usaha."',
+          location: 'Cikarang Pusat - Ruko Jababeka',
+          text: '"Sudah langganan untuk sedot limbah pabrik dan sedot grease trap di ruko restoran saya di Jababeka. Selalu tepat waktu, armada bersih, bebas bau. Sangat membantu kelancaran usaha."',
           avatar: 'A',
+        },
+        {
+          name: 'Hendra Kurniawan',
+          location: 'Lippo Cikarang',
+          text: '"Kuras septic tank di perumahan kami berlangsung rapi tanpa merusak rumput taman. Selang panjang menjangkau lebih dari 40 meter dengan daya hisap vakum kuat dan tanpa bau menyengat."',
+          avatar: 'H',
+        },
+        {
+          name: 'Bambang Setiawan',
+          location: 'Kawasan Industri MM2100',
+          text: '"Pembersihan saluran limbah pabrik manufaktur kami ditangani dengan standar keselamatan K3 tinggi. Teknisi membawa APD lengkap dan menerbitkan dokumen Berita Acara serta faktur resmi."',
+          avatar: 'B',
+        },
+        {
+          name: 'Ratna Dewi',
+          location: 'Cikarang Selatan - Grand Cikarang City',
+          text: '"Layanan darurat tengah malam yang sangat membantu! Kloset meluap tiba-tiba, tim datang pukul 23:30 dan selesai dalam waktu singkat. Respon WhatsApp sangat cepat dan ramah."',
+          avatar: 'R',
         },
       ],
     },
@@ -657,6 +703,22 @@ export const translations: Record<Language, TranslationData> = {
       othersTitle: 'Lainnya',
       rightsReserved: 'Mitra Bersih 24Jam. All Rights Reserved.',
     },
+    chatWidget: {
+      launcherTooltip: 'Tanya Teknisi (Online 24 Jam)',
+      agentName: 'Mitra Bersih Siaga 24 Jam',
+      agentRole: 'Teknisi Sanitasi & Armada Cikarang',
+      agentStatus: 'Online · Respon dalam hitungan detik',
+      timeTag: 'Hari ini',
+      greetingText:
+        'Halo! 👋 Butuh jasa sedot WC, kuras septic tank, atau pelancaran pipa mampet di area Cikarang? Tim kami siap tiba di lokasi dalam 30 menit. Ketik pesan atau pilih topik cepat berikut:',
+      quickPill1: 'WC Mampet Total',
+      quickPill2: 'Kuras Septic Tank Penuh',
+      quickPill3: 'Sedot Limbah Pabrik / Ruko',
+      quickPill4: 'Cek Biaya & Estimasi Cepat',
+      inputPlaceholder: 'Ketik pesan atau keluhan Anda...',
+      sendBtn: 'Kirim ke WhatsApp',
+      footerNote: 'Tersambung langsung ke WhatsApp teknisi resmi Mitra Bersih 24 Jam',
+    },
   },
   en: {
     nav: {
@@ -768,6 +830,19 @@ export const translations: Record<Language, TranslationData> = {
           answerText:
             'Yes, absolutely. Mitra Bersih 24Jam utilizes heavy-duty modern vacuum pumps coupled with sealed airtight spiral suction hoses (closed-circuit suction). Sludge and effluent are transferred directly into enclosed steel tankers with zero spillage and zero offensive odors affecting neighbors or adjacent factory workshops. Our technicians thoroughly disinfect the workspace upon completion.',
         },
+        {
+          id: 6,
+          question: 'What are simple DIY steps to identify and inspect minor plumbing clogs at home?',
+          answerText:
+            'You can easily diagnose minor plumbing or toilet clogs using 5 simple DIY steps before calling a professional vacuum service:',
+          bullets: [
+            '1. Drain Flow Test: Pour a bucket of water down the fixture to check if it drains slowly (minor local block) or completely backs up.',
+            '2. Air Gurgling Inspection: Listen for bubbling or gurgling sounds in sink basins when flushing the toilet, indicating main vent pipe backpressure or a full septic tank.',
+            '3. Clean Floor Drain Strainers & P-Traps: Remove tangled hair, lint, and soap buildup from the first 10–20 cm of the drain.',
+            '4. Natural Baking Soda & Warm Water Flush: Pour 1 cup of baking soda and vinegar, wait 15 minutes, then flush with warm water to dissolve solidified grease.',
+            '5. Use a Rubber Plunger: Apply firm plunges. If water continues to overflow or strong foul odors persist, contact Mitra Bersih 24/7 technicians for professional clearing.',
+          ],
+        },
       ],
     },
     trustIndicators: {
@@ -846,6 +921,24 @@ export const translations: Record<Language, TranslationData> = {
           location: 'Lippo Cikarang Residential',
           text: '"Called them late evening for a severely backed up main sewer line. Fast arrival, clean odorless suction truck, and solved the blockage immediately. Excellent English communication via WhatsApp."',
           avatar: 'D',
+        },
+        {
+          name: 'Min-Jun Park',
+          location: 'EJIP Industrial Park',
+          text: '"Scheduled routine septic maintenance for our industrial facility. Full compliance documentation provided, K3 certified technicians, and prompt professional execution."',
+          avatar: 'M',
+        },
+        {
+          name: 'Anita Wijaya',
+          location: 'Deltamas - Cikarang Pusat',
+          text: '"Vacuum hose reached over 40 meters to our septic tank without spilling a drop. Zero lingering odors, pristine clean work, and completely hassle-free from start to finish."',
+          avatar: 'A',
+        },
+        {
+          name: 'Robert Jenkins',
+          location: 'Kota Deltamas Residential',
+          text: '"Fast emergency response on Sunday morning. Transparent upfront pricing and verified disposal at a legal government IPLT facility. Outstanding peace of mind."',
+          avatar: 'R',
         },
       ],
     },
@@ -1110,6 +1203,22 @@ export const translations: Record<Language, TranslationData> = {
       servicesTitle: 'Services',
       othersTitle: 'Quick Links',
       rightsReserved: 'Mitra Bersih 24Jam. All Rights Reserved.',
+    },
+    chatWidget: {
+      launcherTooltip: 'Live Support (24/7 Standby)',
+      agentName: 'Mitra Bersih 24/7 Dispatch',
+      agentRole: 'Sanitation Crew & Vacuum Tanker Hub',
+      agentStatus: 'Online · Replies in seconds',
+      timeTag: 'Today',
+      greetingText:
+        'Hello! 👋 Need rapid septic tank pumping or drainage clearing in Cikarang? Our vacuum tankers are on standby across industrial estates and residential zones. Type your inquiry or select a quick topic below:',
+      quickPill1: 'Emergency Clogged Toilet',
+      quickPill2: 'Full Septic Tank Emptying',
+      quickPill3: 'Industrial Effluent / Grease Trap',
+      quickPill4: 'Get Instant Rate Estimate',
+      inputPlaceholder: 'Type your message or address...',
+      sendBtn: 'Send on WhatsApp',
+      footerNote: 'Directly connects to official 24-hour English-friendly dispatch on WhatsApp',
     },
   },
 };

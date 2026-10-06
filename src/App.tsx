@@ -4,7 +4,13 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, Pagination, Navigation } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
 import { translations, Language } from './translations';
+import LiveChatWidget from './components/LiveChatWidget';
 
 interface AreaGroup {
   region: string;
@@ -67,6 +73,17 @@ export default function App() {
     return 'id';
   });
 
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    try {
+      const saved = localStorage.getItem('mb_theme');
+      if (saved === 'dark' || saved === 'light') return saved;
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+      }
+    } catch (_) {}
+    return 'light';
+  });
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
@@ -93,6 +110,22 @@ export default function App() {
   useEffect(() => {
     document.documentElement.lang = lang;
   }, [lang]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    try {
+      localStorage.setItem('mb_theme', theme);
+    } catch (_) {}
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+  };
 
   // Scroll detection
   useEffect(() => {
@@ -311,6 +344,29 @@ export default function App() {
                 <span>🇬🇧</span> EN
               </button>
             </div>
+
+            {/* Global Theme Toggle */}
+            <button
+              type="button"
+              className="theme-toggle-btn"
+              onClick={toggleTheme}
+              aria-label={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              title={
+                theme === 'dark'
+                  ? lang === 'en'
+                    ? 'Switch to Light Mode'
+                    : 'Ubah ke Mode Terang'
+                  : lang === 'en'
+                    ? 'Switch to Dark Mode'
+                    : 'Ubah ke Mode Gelap'
+              }
+            >
+              {theme === 'dark' ? (
+                <i className="fas fa-sun theme-icon-sun"></i>
+              ) : (
+                <i className="fas fa-moon theme-icon-moon"></i>
+              )}
+            </button>
 
             <a
               href={`https://wa.me/6285715654183?text=${encodeURIComponent(
@@ -603,7 +659,7 @@ export default function App() {
           >
             <path
               d="M0,60 C240,100 480,20 720,40 C960,60 1200,100 1440,60 L1440,120 L0,120 Z"
-              fill="#F0F7FA"
+              fill="var(--soft-blue)"
             />
           </svg>
         </div>
@@ -958,27 +1014,87 @@ export default function App() {
             </div>
           </div>
 
-          <div className="testimonials-grid">
-            {t.testimonials.reviews.map((rev, idx) => (
-              <div key={idx} className="testimonial-card">
-                <i className="fas fa-quote-right quote-icon"></i>
-                <div className="stars">
-                  <i className="fas fa-star"></i>
-                  <i className="fas fa-star"></i>
-                  <i className="fas fa-star"></i>
-                  <i className="fas fa-star"></i>
-                  <i className="fas fa-star"></i>
-                </div>
-                <p className="testimonial-text">{rev.text}</p>
-                <div className="testimonial-author">
-                  <div className="author-avatar">{rev.avatar}</div>
-                  <div className="author-info">
-                    <strong>{rev.name}</strong>
-                    <span>{rev.location}</span>
+          <div className="testimonials-carousel-wrapper">
+            <Swiper
+              key={lang}
+              modules={[Autoplay, Pagination, Navigation]}
+              spaceBetween={24}
+              slidesPerView={1}
+              autoplay={{
+                delay: 4500,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true,
+              }}
+              pagination={{
+                clickable: true,
+                el: '.testimonial-swiper-pagination',
+                bulletClass: 'testimonial-dot',
+                bulletActiveClass: 'testimonial-dot-active',
+              }}
+              navigation={{
+                prevEl: '.testimonial-nav-prev',
+                nextEl: '.testimonial-nav-next',
+              }}
+              loop={true}
+              grabCursor={true}
+              breakpoints={{
+                640: {
+                  slidesPerView: 2,
+                  spaceBetween: 20,
+                },
+                1024: {
+                  slidesPerView: 3,
+                  spaceBetween: 28,
+                },
+              }}
+              className="testimonials-swiper"
+            >
+              {t.testimonials.reviews.map((rev, idx) => (
+                <SwiperSlide key={idx} className="h-auto">
+                  <div className="testimonial-card">
+                    <i className="fas fa-quote-right quote-icon"></i>
+                    <div className="stars">
+                      <i className="fas fa-star"></i>
+                      <i className="fas fa-star"></i>
+                      <i className="fas fa-star"></i>
+                      <i className="fas fa-star"></i>
+                      <i className="fas fa-star"></i>
+                    </div>
+                    <p className="testimonial-text">{rev.text}</p>
+                    <div className="testimonial-author">
+                      <div className="author-avatar">{rev.avatar}</div>
+                      <div className="author-info">
+                        <strong>{rev.name}</strong>
+                        <span>{rev.location}</span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            ))}
+                </SwiperSlide>
+              ))}
+            </Swiper>
+
+            {/* Custom Carousel Controls */}
+            <div className="testimonials-controls">
+              <button
+                type="button"
+                className="testimonial-nav-btn testimonial-nav-prev"
+                aria-label="Previous Testimonial"
+                title="Review Sebelumnya"
+              >
+                <i className="fas fa-chevron-left"></i>
+              </button>
+
+              <div className="testimonial-swiper-pagination"></div>
+
+              <button
+                type="button"
+                className="testimonial-nav-btn testimonial-nav-next"
+                aria-label="Next Testimonial"
+                title="Review Selanjutnya"
+              >
+                <i className="fas fa-chevron-right"></i>
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -1101,14 +1217,14 @@ export default function App() {
             </div>
 
             <div>
-              <div className="mb-4 bg-white p-3 rounded-xl border border-gray-200 flex items-center gap-3 shadow-xs">
+              <div className="area-search-box mb-4 bg-white p-3 rounded-xl border border-gray-200 flex items-center gap-3 shadow-xs">
                 <i className="fas fa-search text-gray-400 pl-2"></i>
                 <input
                   type="text"
                   placeholder={t.area.searchPlaceholder}
                   value={searchArea}
                   onChange={(e) => setSearchArea(e.target.value)}
-                  className="w-full text-sm outline-none text-[#111111] placeholder:text-gray-400"
+                  className="w-full text-sm outline-none text-[#111111] bg-transparent placeholder:text-gray-400"
                 />
                 {searchArea && (
                   <button
@@ -1139,7 +1255,7 @@ export default function App() {
                 ))}
 
                 {filteredGroups.length === 0 && (
-                  <div className="col-span-2 text-center py-8 bg-white rounded-xl border border-gray-200 text-gray-500 text-sm">
+                  <div className="area-empty-box col-span-2 text-center py-8 bg-white rounded-xl border border-gray-200 text-gray-500 text-sm">
                     {t.area.notFoundPrefix}{searchArea}{t.area.notFoundSuffix}
                   </div>
                 )}
@@ -1154,7 +1270,7 @@ export default function App() {
       </section>
 
       {/* ================= ESTIMASI & KONSULTASI CEPAT ================= */}
-      <section className="bg-white py-16 border-t border-b border-gray-100">
+      <section className="consultation-section py-16 border-t border-b border-gray-100">
         <div className="container-custom">
           <div className="bg-gradient-to-r from-[#111111] via-[#1a1a1a] to-[#111111] text-white rounded-3xl p-8 md:p-12 shadow-xl border border-yellow-400/20">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
@@ -1381,21 +1497,8 @@ export default function App() {
         </div>
       </footer>
 
-      {/* ================= FLOATING WHATSAPP ================= */}
-      <a
-        href={`https://wa.me/6285715654183?text=${encodeURIComponent(
-          lang === 'en'
-            ? 'Hello Mitra Bersih, I would like to inquire about 24-hour septic and plumbing service in Cikarang'
-            : 'Halo Mitra Bersih, saya ingin tanya layanan sedot WC Cikarang 24 jam'
-        )}`}
-        className="whatsapp-float"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Chat WhatsApp"
-        title="Chat WhatsApp 24 Jam"
-      >
-        <i className="fab fa-whatsapp"></i>
-      </a>
+      {/* ================= LIVE CHAT WIDGET (WHATSAPP DIRECT SUPPORT) ================= */}
+      <LiveChatWidget lang={lang} t={t.chatWidget} />
 
       {/* ================= ARTICLE READER MODAL ================= */}
       {selectedArticle && (
@@ -1435,27 +1538,27 @@ export default function App() {
               </div>
             </div>
 
-            <div className="space-y-4 text-gray-700 leading-relaxed text-sm md:text-base">
-              <p className="font-medium text-gray-800 italic bg-gray-50 p-4 rounded-xl border border-gray-200">
+            <div className="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed text-sm md:text-base">
+              <p className="font-medium text-gray-800 dark:text-gray-200 italic bg-gray-50 dark:bg-gray-850 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
                 {selectedArticle.content.intro}
               </p>
 
               {selectedArticle.content.sections.map((sec, idx) => (
                 <div key={idx} className="pt-2">
-                  <h3 className="text-base md:text-lg font-bold text-black mb-1.5 flex items-center gap-2">
+                  <h3 className="text-base md:text-lg font-bold text-black dark:text-white mb-1.5 flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#FFD60A]"></span>
                     {sec.heading}
                   </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{sec.body}</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">{sec.body}</p>
                 </div>
               ))}
 
               <div className="article-pro-tip-box">
-                <strong className="block text-black font-bold mb-1">
-                  <i className="fas fa-lightbulb text-yellow-600 mr-1.5"></i>
+                <strong className="block text-black dark:text-yellow-400 font-bold mb-1">
+                  <i className="fas fa-lightbulb text-yellow-600 dark:text-yellow-400 mr-1.5"></i>
                   {t.blog.proTipTitle}
                 </strong>
-                <p className="text-xs md:text-sm text-gray-800">
+                <p className="text-xs md:text-sm text-gray-800 dark:text-gray-200">
                   {selectedArticle.content.proTip}
                 </p>
               </div>
