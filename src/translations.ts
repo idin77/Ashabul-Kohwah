@@ -101,6 +101,15 @@ export interface TranslationData {
     pillar3Sub: string;
     pillar4: string;
     pillar4Sub: string;
+    safetyEquipment: {
+      badge: string;
+      title: string;
+      subtitle: string;
+      fleetTitle: string;
+      gearTitle: string;
+      truckItems: { icon: string; name: string; desc: string }[];
+      gearItems: { icon: string; name: string; desc: string }[];
+    };
   };
   testimonials: {
     badge: string;
@@ -151,6 +160,19 @@ export interface TranslationData {
     badge: string;
     title: string;
     subtitle: string;
+    autoplayPlay: string;
+    autoplayPause: string;
+    autoplayStatusPlaying: string;
+    autoplayStatusPaused: string;
+    delayLabel: string;
+    delayUnitSeconds: string;
+    speedFast: string;
+    speedNormal: string;
+    speedRelaxed: string;
+    prevPhoto: string;
+    nextPhoto: string;
+    viewFullscreen: string;
+    photoCounter: string;
     items: {
       id: number;
       title: string;
@@ -197,6 +219,7 @@ export interface TranslationData {
     emailLabel: string;
     locationLabel: string;
     locationVal: string;
+    getDirectionsBtn: string;
     servicesTitle: string;
     othersTitle: string;
     rightsReserved: string;
@@ -215,6 +238,51 @@ export interface TranslationData {
     inputPlaceholder: string;
     sendBtn: string;
     footerNote: string;
+  };
+  serviceMap: {
+    mapTitle: string;
+    mapSubtitle: string;
+    allDistricts: string;
+    dispatchBadge: string;
+    etaLabel: string;
+    landmarksLabel: string;
+    villagesCoveredLabel: string;
+    orderTankerBtn: string;
+    clickToFilterHint: string;
+  };
+  socialLinks: {
+    followUs: string;
+    facebook: string;
+    instagram: string;
+    tiktok: string;
+    facebookTooltip: string;
+    instagramTooltip: string;
+    tiktokTooltip: string;
+  };
+  quickBookBar: {
+    statusBadge: string;
+    phoneNumberDisplay: string;
+    callNowBtn: string;
+    waBtn: string;
+    etaNotice: string;
+  };
+  newsletter: {
+    badge: string;
+    title: string;
+    subtitle: string;
+    benefit1: string;
+    benefit2: string;
+    benefit3: string;
+    emailPlaceholder: string;
+    submitBtn: string;
+    submittingBtn: string;
+    successTitle: string;
+    successMessage: string;
+    alreadySubscribedMessage: string;
+    errorMessage: string;
+    invalidEmailMessage: string;
+    privacyNote: string;
+    subscribeAnotherBtn: string;
   };
 }
 
@@ -393,6 +461,68 @@ export const translations: Record<Language, TranslationData> = {
       pillar3Sub: 'Pompa Vakum Kedap Udara',
       pillar4: 'Garansi Tertulis',
       pillar4Sub: 'Pengerjaan Tuntas Beres',
+      safetyEquipment: {
+        badge: 'STANDAR KESELAMATAN & ARMADA',
+        title: 'Perlengkapan Keselamatan (Safety Equipment) & Armada Tangki Modern',
+        subtitle:
+          'Komitmen nyata Mitra Bersih 24 Jam terhadap keselamatan kerja K3, higienitas lingkungan, dan profesionalisme teknisi melalui teknologi armada serta APD lengkap.',
+        fleetTitle: 'Teknologi Truk Tangki Vakum Modern',
+        gearTitle: 'Alat Pelindung Diri (APD) Teknisi K3',
+        truckItems: [
+          {
+            icon: 'fas fa-truck-moving',
+            name: 'Truk Tangki Baja Bertekanan Tinggi',
+            desc: 'Kapasitas 4.000–6.000L dengan tangki baja kedap tekanan tinggi berstandar industri resmi.',
+          },
+          {
+            icon: 'fas fa-gauge-high',
+            name: 'Pompa Vakum PTO Daya Hisap Tinggi',
+            desc: 'Daya hisap ekstra kuat untuk lumpur padat mengkristal tanpa risiko kebocoran atau macet.',
+          },
+          {
+            icon: 'fas fa-route',
+            name: 'Selang Spiral Kedap Udara 100 Meter',
+            desc: 'Jangkauan fleksibel ekstra panjang untuk perumahan gang sempit dan kawasan pabrik luas.',
+          },
+          {
+            icon: 'fas fa-shield-virus',
+            name: 'Sistem Deodorisasi & Katup Anti-Bau',
+            desc: 'Sirkulasi tertutup (closed-circuit) menjaga area pemukiman tetap bebas bau menyengat.',
+          },
+        ],
+        gearItems: [
+          {
+            icon: 'fas fa-hard-hat',
+            name: 'Helm Keselamatan K3 (Hard Hat)',
+            desc: 'Melindungi kepala teknisi saat inspeksi manhole, bak kontrol, dan area proyek.',
+          },
+          {
+            icon: 'fas fa-smog',
+            name: 'Detektor Gas Metana & H2S Otomatis',
+            desc: 'Mendeteksi konsentrasi gas beracun secara akurat sebelum tangki septic dibuka.',
+          },
+          {
+            icon: 'fas fa-head-side-mask',
+            name: 'Masker Respirator Partikulat & Uap Gas',
+            desc: 'Filtrasi udara ganda mencegah kontaminasi bioaerosol dan uap limbah berbahaya.',
+          },
+          {
+            icon: 'fas fa-hand-holding-medical',
+            name: 'Sarung Tangan Kimia & Karet Tebal',
+            desc: 'Perlindungan tangan anti-selip dari bakteri patogen dan cairan limbah asam.',
+          },
+          {
+            icon: 'fas fa-shoe-prints',
+            name: 'Sepatu Safety Boots Baja Anti-Tembus',
+            desc: 'Sol tebal tahan tusukan benda tajam dan anti-licin di permukaan keramik basah.',
+          },
+          {
+            icon: 'fas fa-vest',
+            name: 'Rompi Reflektif Keselamatan (Hi-Vis)',
+            desc: 'Visibilitas tinggi untuk memastikan keselamatan teknisi saat panggilan darurat malam.',
+          },
+        ],
+      },
     },
     testimonials: {
       badge: 'TESTIMONI',
@@ -575,6 +705,19 @@ export const translations: Record<Language, TranslationData> = {
       title: 'Galeri Aktivitas Kami',
       subtitle:
         'Bukti nyata pengerjaan jasa sedot wc cikarang dan sedot tinja cikarang oleh tim profesional menggunakan truk tangki modern. Klik gambar untuk memperbesar.',
+      autoplayPlay: 'Mulai Putar Otomatis',
+      autoplayPause: 'Jeda Putaran',
+      autoplayStatusPlaying: 'Putar Otomatis Aktif',
+      autoplayStatusPaused: 'Putaran Dijeda',
+      delayLabel: 'Kecepatan Jeda:',
+      delayUnitSeconds: 'detik',
+      speedFast: 'Cepat (2s)',
+      speedNormal: 'Sedang (3.5s)',
+      speedRelaxed: 'Santai (5s)',
+      prevPhoto: 'Foto Sebelumnya',
+      nextPhoto: 'Foto Selanjutnya',
+      viewFullscreen: 'Perbesar / Layar Penuh',
+      photoCounter: 'Foto',
       items: [
         {
           id: 1,
@@ -699,6 +842,7 @@ export const translations: Record<Language, TranslationData> = {
       emailLabel: 'Email',
       locationLabel: 'Area Layanan Utama',
       locationVal: 'Cikarang, Kabupaten Bekasi',
+      getDirectionsBtn: 'Buka Petunjuk Arah (Google Maps)',
       servicesTitle: 'Layanan',
       othersTitle: 'Lainnya',
       rightsReserved: 'Mitra Bersih 24Jam. All Rights Reserved.',
@@ -718,6 +862,54 @@ export const translations: Record<Language, TranslationData> = {
       inputPlaceholder: 'Ketik pesan atau keluhan Anda...',
       sendBtn: 'Kirim ke WhatsApp',
       footerNote: 'Tersambung langsung ke WhatsApp teknisi resmi Mitra Bersih 24 Jam',
+    },
+    serviceMap: {
+      mapTitle: 'Peta Interaktif Armada Siaga Cikarang',
+      mapSubtitle: 'Pilih atau sentuh kecamatan untuk memantau pos armada truk tangki, kawasan industri, dan cakupan kelurahan.',
+      allDistricts: 'Semua Wilayah Cikarang',
+      dispatchBadge: 'Pos Truk Tangki Siaga 24 Jam',
+      etaLabel: 'Estimasi Tiba: 25 - 30 Menit',
+      landmarksLabel: 'Kawasan Industri & Landmark Utama:',
+      villagesCoveredLabel: 'Kelurahan / Desa Terlayani',
+      orderTankerBtn: 'Pesan Armada ke',
+      clickToFilterHint: 'Klik atau gunakan keyboard (Tab, Panah, & Enter) pada peta untuk memilih kecamatan',
+    },
+    socialLinks: {
+      followUs: 'Ikuti Kami',
+      facebook: 'Facebook',
+      instagram: 'Instagram',
+      tiktok: 'TikTok',
+      facebookTooltip: 'Ikuti di Facebook (Update & Tips)',
+      instagramTooltip: 'Ikuti di Instagram (@mitrabersih24jam)',
+      tiktokTooltip: 'Tonton Video Edukasi di TikTok',
+    },
+    quickBookBar: {
+      statusBadge: 'Darurat 24 Jam',
+      phoneNumberDisplay: '+62 857-1565-4183',
+      callNowBtn: 'Telepon Sekarang',
+      waBtn: 'WhatsApp',
+      etaNotice: 'Tiba 30 Menit',
+    },
+    newsletter: {
+      badge: 'BULETIN BULANAN',
+      title: 'Tips Perawatan Rumah & Saluran Air Setiap Bulan',
+      subtitle:
+        'Bergabunglah bersama 1.200+ pemilik hunian dan pengelola bangunan di Cikarang. Dapatkan panduan praktis perawatan septic tank, deteksi dini pipa mampet, dan tips sanitasi higienis langsung di inbox Anda.',
+      benefit1: 'Panduan kuras & pencegahan bau septic tank',
+      benefit2: 'Solusi mandiri pipa wastafel & kloset mampet',
+      benefit3: 'Bebas spam & berhenti langganan kapan saja',
+      emailPlaceholder: 'Masukkan alamat email Anda (contoh: budi@gmail.com)...',
+      submitBtn: 'Langganan Tips Bulanan',
+      submittingBtn: 'Mendaftarkan Email...',
+      successTitle: 'Berhasil Berlangganan!',
+      successMessage:
+        'Terima kasih telah mendaftar! Edisi tips perawatan rumah & plumbing berikutnya akan kami kirimkan langsung ke email Anda.',
+      alreadySubscribedMessage:
+        'Email Anda sudah terdaftar di daftar buletin Mitra Bersih 24 Jam. Terima kasih telah menjadi pembaca setia!',
+      errorMessage: 'Terjadi gangguan saat menyimpan pendaftaran. Silakan coba kembali atau hubungi WhatsApp kami.',
+      invalidEmailMessage: 'Mohon masukkan format email yang valid (contoh: nama@domain.com).',
+      privacyNote: 'Kami menghargai privasi Anda. Email Anda aman dan tidak akan disebarluaskan.',
+      subscribeAnotherBtn: 'Daftarkan Email Lain',
     },
   },
   en: {
@@ -894,6 +1086,68 @@ export const translations: Record<Language, TranslationData> = {
       pillar3Sub: 'Closed Vacuum Technology',
       pillar4: 'Written Warranty',
       pillar4Sub: 'Complete Problem Resolution',
+      safetyEquipment: {
+        badge: 'SAFETY EQUIPMENT & FLEET ARSENAL',
+        title: 'Safety Equipment & Modern Vacuum Truck Arsenal',
+        subtitle:
+          'Our commitment to K3 occupational safety, environmental hygiene, and technician professionalism demonstrated through specialized gear and modern tanker engineering.',
+        fleetTitle: 'Modern Vacuum Truck Technology',
+        gearTitle: 'Technician Personal Protective Equipment (PPE)',
+        truckItems: [
+          {
+            icon: 'fas fa-truck-moving',
+            name: 'Heavy-Gauge Steel Vacuum Tankers',
+            desc: '4,000–6,000L heavy-duty pressure vessels engineered to strict industrial standards.',
+          },
+          {
+            icon: 'fas fa-gauge-high',
+            name: 'High-Power PTO Vacuum Pumps',
+            desc: 'Maximum suction force capable of extracting dense crystallized sludge with zero clogging.',
+          },
+          {
+            icon: 'fas fa-route',
+            name: '100-Meter Sealed Spiral Hoses',
+            desc: 'Extended reach hoses designed for narrow residential alleys and sprawling factory compounds.',
+          },
+          {
+            icon: 'fas fa-shield-virus',
+            name: 'Anti-Odor Valves & Closed Circulation',
+            desc: 'Closed-circuit transfer ensures completely odor-free operation without disturbing neighbors.',
+          },
+        ],
+        gearItems: [
+          {
+            icon: 'fas fa-hard-hat',
+            name: 'Certified K3 Safety Helmets',
+            desc: 'Impact-resistant head protection for manhole inspections and confined basement entries.',
+          },
+          {
+            icon: 'fas fa-smog',
+            name: 'Methane & H2S Multi-Gas Detectors',
+            desc: 'Continuous hazardous air monitoring to detect toxic methane and combustible gases.',
+          },
+          {
+            icon: 'fas fa-head-side-mask',
+            name: 'Chemical & Vapor Respirators',
+            desc: 'High-grade dual-filter air purification protecting technicians from harmful bioaerosols.',
+          },
+          {
+            icon: 'fas fa-hand-holding-medical',
+            name: 'Heavy-Duty Chemical Nitrile Gloves',
+            desc: 'Slip-resistant, puncture-proof barrier against biohazards and acidic wastewater.',
+          },
+          {
+            icon: 'fas fa-shoe-prints',
+            name: 'Steel-Toe Waterproof Safety Boots',
+            desc: 'Puncture-resistant soles and non-slip treads ensuring stability on slick surfaces.',
+          },
+          {
+            icon: 'fas fa-vest',
+            name: 'High-Visibility Reflective Vests',
+            desc: 'Maximum optical reflectivity to safeguard crew during 24-hour night emergency dispatch.',
+          },
+        ],
+      },
     },
     testimonials: {
       badge: 'TESTIMONIALS',
@@ -1076,6 +1330,19 @@ export const translations: Record<Language, TranslationData> = {
       title: 'Our Service Operations Gallery',
       subtitle:
         'Live photographic evidence of professional septic pumping and pipeline clearing operations in Cikarang with modern vacuum trucks. Click to expand.',
+      autoplayPlay: 'Start Auto-Play',
+      autoplayPause: 'Pause Auto-Play',
+      autoplayStatusPlaying: 'Auto-Play Active',
+      autoplayStatusPaused: 'Auto-Play Paused',
+      delayLabel: 'Transition Delay:',
+      delayUnitSeconds: 'seconds',
+      speedFast: 'Fast (2s)',
+      speedNormal: 'Normal (3.5s)',
+      speedRelaxed: 'Relaxed (5s)',
+      prevPhoto: 'Previous Photo',
+      nextPhoto: 'Next Photo',
+      viewFullscreen: 'Expand / Fullscreen',
+      photoCounter: 'Photo',
       items: [
         {
           id: 1,
@@ -1200,6 +1467,7 @@ export const translations: Record<Language, TranslationData> = {
       emailLabel: 'Corporate Email',
       locationLabel: 'Primary Service Hub',
       locationVal: 'Cikarang, Bekasi Regency, West Java',
+      getDirectionsBtn: 'Get Directions (Google Maps)',
       servicesTitle: 'Services',
       othersTitle: 'Quick Links',
       rightsReserved: 'Mitra Bersih 24Jam. All Rights Reserved.',
@@ -1219,6 +1487,54 @@ export const translations: Record<Language, TranslationData> = {
       inputPlaceholder: 'Type your message or address...',
       sendBtn: 'Send on WhatsApp',
       footerNote: 'Directly connects to official 24-hour English-friendly dispatch on WhatsApp',
+    },
+    serviceMap: {
+      mapTitle: 'Cikarang Service Area Interactive Map',
+      mapSubtitle: 'Select or tap sub-districts to inspect active tanker hubs, industrial parks, and village coverage.',
+      allDistricts: 'All Cikarang Districts',
+      dispatchBadge: '24/7 Standby Vacuum Tanker Hub',
+      etaLabel: 'Estimated Arrival: 25 - 30 Minutes',
+      landmarksLabel: 'Industrial Parks & Key Hubs:',
+      villagesCoveredLabel: 'Sub-districts / Villages Covered',
+      orderTankerBtn: 'Dispatch Tanker to',
+      clickToFilterHint: 'Click or use keyboard (Tab, Arrows, & Enter) on map to select sub-districts',
+    },
+    socialLinks: {
+      followUs: 'Follow Us',
+      facebook: 'Facebook',
+      instagram: 'Instagram',
+      tiktok: 'TikTok',
+      facebookTooltip: 'Follow on Facebook (Updates & Offers)',
+      instagramTooltip: 'Follow on Instagram (@mitrabersih24jam)',
+      tiktokTooltip: 'Watch Educational Videos on TikTok',
+    },
+    quickBookBar: {
+      statusBadge: '24/7 Emergency',
+      phoneNumberDisplay: '+62 857-1565-4183',
+      callNowBtn: 'Call Now',
+      waBtn: 'WhatsApp',
+      etaNotice: '30 Min Arrival',
+    },
+    newsletter: {
+      badge: 'MONTHLY SANITATION DIGEST',
+      title: 'Monthly Home Maintenance & Plumbing Care Tips',
+      subtitle:
+        'Join 1,200+ homeowners and property managers across Cikarang. Receive practical guides on septic tank longevity, DIY plumbing unclogging, and seasonal sanitation alerts delivered directly to your inbox.',
+      benefit1: 'Septic tank preventative care & odor elimination',
+      benefit2: 'Step-by-step DIY unclogging techniques',
+      benefit3: 'Zero spam & one-click unsubscribe anytime',
+      emailPlaceholder: 'Enter your email address (e.g. alex@example.com)...',
+      submitBtn: 'Subscribe to Monthly Tips',
+      submittingBtn: 'Registering Email...',
+      successTitle: 'Subscription Confirmed!',
+      successMessage:
+        'Thank you for subscribing! Your next edition of home maintenance & plumbing care tips will arrive in your inbox soon.',
+      alreadySubscribedMessage:
+        'Your email is already registered in our newsletter directory. Thank you for being a valued reader!',
+      errorMessage: 'Failed to save subscription. Please try again or reach out to our WhatsApp team.',
+      invalidEmailMessage: 'Please provide a valid email address (e.g. name@domain.com).',
+      privacyNote: 'We value your privacy. Your email is strictly confidential and never shared.',
+      subscribeAnotherBtn: 'Subscribe Another Email',
     },
   },
 };

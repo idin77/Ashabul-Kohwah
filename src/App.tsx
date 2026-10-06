@@ -11,6 +11,10 @@ import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import { translations, Language } from './translations';
 import LiveChatWidget from './components/LiveChatWidget';
+import ServiceAreaMap from './components/ServiceAreaMap';
+import SocialLinks from './components/SocialLinks';
+import QuickBookBar from './components/QuickBookBar';
+import NewsletterSubscription from './components/NewsletterSubscription';
 
 interface AreaGroup {
   region: string;
@@ -91,6 +95,7 @@ export default function App() {
   const [selectedArticleId, setSelectedArticleId] = useState<number | null>(null);
   const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<number | null>(null);
   const [searchArea, setSearchArea] = useState('');
+  const [selectedMapDistrict, setSelectedMapDistrict] = useState<string | null>(null);
 
   // Form calculator state
   const [formType, setFormType] = useState('Sedot Septic Tank Rumah Tangga');
@@ -209,8 +214,11 @@ export default function App() {
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
-  // Filter area items if search is active
+  // Filter area items if search is active or map district is selected
   const filteredGroups = AREA_GROUPS.map((group) => {
+    if (selectedMapDistrict && group.region !== selectedMapDistrict) {
+      return { region: group.region, items: [] };
+    }
     if (!searchArea.trim()) return group;
     const term = searchArea.toLowerCase();
     const filteredItems = group.items.filter((item) =>
@@ -931,6 +939,27 @@ export default function App() {
                   </li>
                 ))}
               </ul>
+
+              {/* Safety Equipment Preview Badges in Card 3 */}
+              <div className="card-safety-preview">
+                <span className="card-safety-title">
+                  <i className="fas fa-shield-halved"></i> Safety Equipment:
+                </span>
+                <div className="card-safety-pills">
+                  <span className="safety-pill">
+                    <i className="fas fa-hard-hat text-amber-500"></i> Helm K3
+                  </span>
+                  <span className="safety-pill">
+                    <i className="fas fa-smog text-blue-500"></i> Gas Detector
+                  </span>
+                  <span className="safety-pill">
+                    <i className="fas fa-head-side-mask text-emerald-500"></i> Respirator
+                  </span>
+                  <span className="safety-pill">
+                    <i className="fas fa-shoe-prints text-red-500"></i> Steel Boots
+                  </span>
+                </div>
+              </div>
             </div>
 
             {/* Card 4 */}
@@ -953,6 +982,79 @@ export default function App() {
                   </li>
                 ))}
               </ul>
+            </div>
+          </div>
+
+          {/* ================= DEDICATED SAFETY EQUIPMENT & VACUUM FLEET SHOWCASE ================= */}
+          <div className="authority-safety-showcase">
+            <div className="safety-showcase-header">
+              <span className="safety-badge">
+                <i className="fas fa-shield-halved"></i> {t.trustIndicators.safetyEquipment.badge}
+              </span>
+              <h3 className="safety-title">{t.trustIndicators.safetyEquipment.title}</h3>
+              <p className="safety-subtitle">{t.trustIndicators.safetyEquipment.subtitle}</p>
+            </div>
+
+            <div className="safety-showcase-grid">
+              {/* Category 1: Modern Vacuum Trucks */}
+              <div className="safety-category-card">
+                <div className="safety-category-header">
+                  <div className="safety-category-icon bg-blue-500/15 text-blue-600 dark:text-blue-400">
+                    <i className="fas fa-truck-moving"></i>
+                  </div>
+                  <div>
+                    <h4>{t.trustIndicators.safetyEquipment.fleetTitle}</h4>
+                    <span className="safety-category-meta">
+                      <i className="fas fa-check-double text-blue-500 mr-1"></i>
+                      {lang === 'en' ? 'ISO 14001 Closed Vacuum Standard' : 'Standar Sirkulasi Tertutup ISO 14001'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="safety-items-list">
+                  {t.trustIndicators.safetyEquipment.truckItems.map((item, idx) => (
+                    <div key={idx} className="safety-item-row">
+                      <div className="safety-item-icon fleet-icon">
+                        <i className={item.icon}></i>
+                      </div>
+                      <div className="safety-item-content">
+                        <strong>{item.name}</strong>
+                        <p>{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Category 2: Technician Protective Gear (APD) */}
+              <div className="safety-category-card">
+                <div className="safety-category-header">
+                  <div className="safety-category-icon bg-amber-500/15 text-amber-600 dark:text-amber-400">
+                    <i className="fas fa-user-shield"></i>
+                  </div>
+                  <div>
+                    <h4>{t.trustIndicators.safetyEquipment.gearTitle}</h4>
+                    <span className="safety-category-meta">
+                      <i className="fas fa-shield-heart text-amber-500 mr-1"></i>
+                      {lang === 'en' ? 'Certified K3 & Confined Space Gear' : 'Sertifikasi K3 & Ruang Terbatas Lapangan'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="safety-items-list">
+                  {t.trustIndicators.safetyEquipment.gearItems.map((item, idx) => (
+                    <div key={idx} className="safety-item-row">
+                      <div className="safety-item-icon gear-icon">
+                        <i className={item.icon}></i>
+                      </div>
+                      <div className="safety-item-content">
+                        <strong>{item.name}</strong>
+                        <p>{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1144,6 +1246,9 @@ export default function App() {
               </article>
             ))}
           </div>
+
+          {/* ================= NEWSLETTER SUBSCRIPTION FORM ================= */}
+          <NewsletterSubscription lang={lang} t={t.newsletter} />
         </div>
       </section>
 
@@ -1187,6 +1292,14 @@ export default function App() {
             <h2 className="section-title">{t.area.title}</h2>
             <p className="section-subtitle">{t.area.subtitle}</p>
           </div>
+
+          {/* Service Area Interactive Map */}
+          <ServiceAreaMap
+            lang={lang}
+            t={t.serviceMap}
+            selectedDistrict={selectedMapDistrict}
+            onSelectDistrict={setSelectedMapDistrict}
+          />
 
           <div className="area-content">
             <div className="area-illustration">
@@ -1401,6 +1514,15 @@ export default function App() {
                 <div className="info">
                   <span>{t.footer.locationLabel}</span>
                   <strong>{t.footer.locationVal}</strong>
+                  <a
+                    href="https://www.google.com/maps/dir/?api=1&destination=Cikarang+Kabupaten+Bekasi+Jawa+Barat"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 mt-2 text-xs font-semibold text-[#FFD60A] hover:underline"
+                  >
+                    <i className="fas fa-location-arrow"></i>
+                    <span>{t.footer.getDirectionsBtn}</span>
+                  </a>
                 </div>
               </div>
 
@@ -1497,8 +1619,14 @@ export default function App() {
         </div>
       </footer>
 
+      {/* ================= SOCIAL LINKS FLOATING WIDGET (LEFT SIDE) ================= */}
+      <SocialLinks lang={lang} t={t.socialLinks} />
+
       {/* ================= LIVE CHAT WIDGET (WHATSAPP DIRECT SUPPORT) ================= */}
       <LiveChatWidget lang={lang} t={t.chatWidget} />
+
+      {/* ================= STICKY MOBILE QUICK BOOK BAR ================= */}
+      <QuickBookBar lang={lang} t={t.quickBookBar} />
 
       {/* ================= ARTICLE READER MODAL ================= */}
       {selectedArticle && (
