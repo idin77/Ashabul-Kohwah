@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 import 'swiper/css';
@@ -11,7 +11,7 @@ import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import { translations, Language } from './translations';
 import LiveChatWidget from './components/LiveChatWidget';
-import ServiceAreaMap from './components/ServiceAreaMap';
+import ServiceAreaMap, { DISTRICTS_DATA } from './components/ServiceAreaMap';
 import SocialLinks from './components/SocialLinks';
 import QuickBookBar from './components/QuickBookBar';
 import NewsletterSubscription from './components/NewsletterSubscription';
@@ -92,8 +92,15 @@ export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+  const [faqSearchQuery, setFaqSearchQuery] = useState('');
+  const [selectedFaqCategory, setSelectedFaqCategory] = useState<string>('all');
   const [selectedArticleId, setSelectedArticleId] = useState<number | null>(null);
+  const [selectedBlogCategory, setSelectedBlogCategory] = useState<string>('all');
   const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<number | null>(null);
+  const [isGalleryAutoplay, setIsGalleryAutoplay] = useState(false);
+  const [galleryDelay, setGalleryDelay] = useState(3500);
+  const [activeGallerySpotlight, setActiveGallerySpotlight] = useState(0);
+  const [hoveredGalleryIndex, setHoveredGalleryIndex] = useState<number | null>(null);
   const [searchArea, setSearchArea] = useState('');
   const [selectedMapDistrict, setSelectedMapDistrict] = useState<string | null>(null);
 
@@ -103,6 +110,66 @@ export default function App() {
   const [formDetail, setFormDetail] = useState('');
 
   const t = translations[lang];
+
+  // Filtered FAQ items based on category tabs and search query
+  const filteredFaqs = useMemo(() => {
+    const q = faqSearchQuery.trim().toLowerCase();
+    return t.faq.items.filter((item) => {
+      const matchCategory =
+        selectedFaqCategory === 'all' || item.categoryTag === selectedFaqCategory;
+      if (!matchCategory) return false;
+
+      if (!q) return true;
+      const matchQ = item.question.toLowerCase().includes(q);
+      const matchA = item.answerText.toLowerCase().includes(q);
+      const matchB = item.bullets?.some((b) => b.toLowerCase().includes(q));
+      return matchQ || matchA || matchB;
+    });
+  }, [faqSearchQuery, selectedFaqCategory, t.faq.items]);
+
+  // Filtered Blog articles based on selected category tag
+  const filteredArticles = useMemo(() => {
+    if (selectedBlogCategory === 'all') {
+      return t.blog.articles;
+    }
+    return t.blog.articles.filter((article) => article.categoryTag === selectedBlogCategory);
+  }, [selectedBlogCategory, t.blog.articles]);
+
+  // Gallery auto-play timer
+  useEffect(() => {
+    if (!isGalleryAutoplay) return;
+
+    const interval = setInterval(() => {
+      setActiveGallerySpotlight((prev) => (prev + 1) % t.gallery.items.length);
+      setSelectedGalleryIndex((prev) => {
+        if (prev === null) return null;
+        return (prev + 1) % t.gallery.items.length;
+      });
+    }, galleryDelay);
+
+    return () => clearInterval(interval);
+  }, [isGalleryAutoplay, galleryDelay, t.gallery.items.length]);
+
+  // Keyboard navigation for gallery & lightbox
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (selectedGalleryIndex !== null) {
+        if (e.key === 'Escape') {
+          setSelectedGalleryIndex(null);
+        } else if (e.key === 'ArrowRight') {
+          setSelectedGalleryIndex((prev) => (prev !== null ? (prev + 1) % t.gallery.items.length : null));
+        } else if (e.key === 'ArrowLeft') {
+          setSelectedGalleryIndex((prev) => (prev !== null ? (prev - 1 + t.gallery.items.length) % t.gallery.items.length : null));
+        } else if (e.code === 'Space') {
+          e.preventDefault();
+          setIsGalleryAutoplay((prev) => !prev);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedGalleryIndex, t.gallery.items.length]);
 
   const handleLangChange = (newLang: Language) => {
     setLang(newLang);
@@ -214,22 +281,106 @@ export default function App() {
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
-  // Filter area items if search is active or map district is selected
-  const filteredGroups = AREA_GROUPS.map((group) => {
-    if (selectedMapDistrict && group.region !== selectedMapDistrict) {
-      return { region: group.region, items: [] };
+  // District map selection handler: updates map state, updates search bar, and smooth scrolls to area list
+  const handleSelectDistrictFromMap = (districtName: string | null) => {
+    setSelectedMapDistrict(districtName);
+    if (districtName) {
+      const district = DISTRICTS_DATA.find(
+        (d) => d.nameId === districtName || d.nameEn === districtName
+      );
+      const searchVal = district
+        ? lang === 'en'
+          ? district.nameEn
+          : district.nameId
+        : districtName;
+      setSearchArea(searchVal);
+
+      // Smooth scroll to area search container so the user immediately sees the filtered villages
+      setTimeout(() => {
+        const areaSearchBox = document.getElementById('area-search-container');
+        if (areaSearchBox) {
+          areaSearchBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }, 50);
+    } else {
+      setSearchArea('');
     }
-    if (!searchArea.trim()) return group;
-    const term = searchArea.toLowerCase();
-    const filteredItems = group.items.filter((item) =>
-      item.toLowerCase().includes(term)
+  };
+
+  // Search input change handler: keeps search query and map district selection synchronized
+  const handleSearchAreaChange = (val: string) => {
+    setSearchArea(val);
+    if (!val.trim()) {
+      setSelectedMapDistrict(null);
+      return;
+    }
+    const term = val.trim().toLowerCase();
+    const matchingDistrict = DISTRICTS_DATA.find(
+      (d) =>
+        d.nameId.toLowerCase() === term ||
+        d.nameEn.toLowerCase() === term
     );
-    const regionMatches = group.region.toLowerCase().includes(term);
-    return {
-      region: group.region,
-      items: regionMatches ? group.items : filteredItems,
-    };
-  }).filter((group) => group.items.length > 0);
+    if (matchingDistrict) {
+      setSelectedMapDistrict(matchingDistrict.nameId);
+    } else if (
+      selectedMapDistrict &&
+      !selectedMapDistrict.toLowerCase().includes(term)
+    ) {
+      // If user typed a search that does not match the active district, clear the map district restriction
+      setSelectedMapDistrict(null);
+    }
+  };
+
+  // Reset area search & map filter
+  const handleClearAreaSearch = () => {
+    setSearchArea('');
+    setSelectedMapDistrict(null);
+  };
+
+  // Filter area items if search is active or map district is selected
+  const filteredGroups = useMemo(() => {
+    return AREA_GROUPS.map((group) => {
+      // If a map district is selected, only show villages for that district
+      if (selectedMapDistrict) {
+        const matchingDistrict = DISTRICTS_DATA.find(
+          (d) =>
+            d.nameId.toLowerCase() === selectedMapDistrict.toLowerCase() ||
+            d.nameEn.toLowerCase() === selectedMapDistrict.toLowerCase()
+        );
+        const targetRegion = matchingDistrict ? matchingDistrict.nameId : selectedMapDistrict;
+        if (group.region.toLowerCase() !== targetRegion.toLowerCase()) {
+          return { region: group.region, items: [] };
+        }
+      }
+
+      if (!searchArea.trim()) return group;
+
+      const term = searchArea.trim().toLowerCase();
+
+      // Check if search matches the district name (in Indonesian or English)
+      const districtInfo = DISTRICTS_DATA.find(
+        (d) => d.nameId.toLowerCase() === group.region.toLowerCase()
+      );
+      const isDistrictMatch =
+        group.region.toLowerCase().includes(term) ||
+        (districtInfo && districtInfo.nameEn.toLowerCase().includes(term));
+
+      if (isDistrictMatch) {
+        // District matched: show ALL villages for this district!
+        return group;
+      }
+
+      // Otherwise filter villages by substring
+      const filteredItems = group.items.filter((item) =>
+        item.toLowerCase().includes(term)
+      );
+
+      return {
+        region: group.region,
+        items: filteredItems,
+      };
+    }).filter((group) => group.items.length > 0);
+  }, [selectedMapDistrict, searchArea]);
 
   const selectedArticle =
     selectedArticleId !== null
@@ -414,6 +565,52 @@ export default function App() {
         <span className="decoration diamond"></span>
         <span className="decoration circle-outline"></span>
         <span className="decoration dot-pattern"></span>
+
+        {/* Floating 24/7 Emergency Service Badge with Radar Ripple Animation */}
+        <a
+          href={`https://wa.me/6285715654183?text=${encodeURIComponent(
+            lang === 'en'
+              ? 'Hello Mitra Bersih, I need 24/7 emergency vacuum / plumbing service in Cikarang immediately.'
+              : 'Halo Mitra Bersih, saya butuh layanan darurat 24 jam sedot WC Cikarang sekarang.'
+          )}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hero-floating-emergency-badge"
+          aria-label={`${t.hero.floatingEmergencyBadge} - ${t.hero.floatingEmergencyStatus}`}
+          title={lang === 'en' ? 'Click for Instant 24/7 Emergency Dispatch' : 'Klik untuk Panggilan Cepat Darurat 24 Jam'}
+        >
+          {/* Animated Multi-Ring Ripple Beacon */}
+          <div className="emergency-ripple-beacon" aria-hidden="true">
+            <span className="emergency-ripple-ring ring-1"></span>
+            <span className="emergency-ripple-ring ring-2"></span>
+            <span className="emergency-ripple-ring ring-3"></span>
+            <div className="emergency-beacon-core">
+              <i className="fas fa-truck-fast text-[11px] text-[#111111]"></i>
+            </div>
+          </div>
+
+          <div className="emergency-badge-text-group">
+            <div className="emergency-badge-top-row">
+              <span className="emergency-live-pill">
+                <span className="emergency-status-dot"></span>
+                <span>{t.hero.floatingEmergencyStatus}</span>
+              </span>
+              <span className="emergency-eta-tag">
+                <i className="fas fa-bolt text-[#FFD60A] text-[9px]"></i> 30m
+              </span>
+            </div>
+            <span className="emergency-badge-title">
+              {t.hero.floatingEmergencyBadge}
+            </span>
+            <span className="emergency-badge-sub">
+              {t.hero.floatingEmergencySub}
+            </span>
+          </div>
+
+          <div className="emergency-badge-cta-arrow" aria-hidden="true">
+            <i className="fas fa-chevron-right text-[11px]"></i>
+          </div>
+        </a>
 
         <div className="container-custom">
           <div className="hero-grid">
@@ -808,40 +1005,194 @@ export default function App() {
             <p className="section-subtitle">{t.faq.subtitle}</p>
           </div>
 
-          <div className="faq-list">
-            {t.faq.items.map((item, index) => {
-              const isOpen = openFaqIndex === index;
+          {/* FAQ Category Filter Tabs */}
+          <div className="faq-category-tabs-bar mb-6 flex flex-wrap items-center justify-center gap-2.5">
+            {t.faq.categories.map((cat) => {
+              const isSelected = selectedFaqCategory === cat.id;
+              const count =
+                cat.id === 'all'
+                  ? t.faq.items.length
+                  : t.faq.items.filter((item) => item.categoryTag === cat.id).length;
+
               return (
-                <div
-                  key={item.id}
-                  className={`faq-item ${isOpen ? 'active' : ''}`}
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => {
+                    setSelectedFaqCategory(cat.id);
+                    setOpenFaqIndex(null);
+                  }}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs md:text-sm font-bold transition-all cursor-pointer ${
+                    isSelected
+                      ? 'bg-[#FFD60A] text-[#111111] shadow-md shadow-yellow-500/20 ring-2 ring-yellow-400 scale-[1.02]'
+                      : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-[#FFD60A] hover:text-black dark:hover:text-white'
+                  }`}
+                  aria-pressed={isSelected}
                 >
-                  <button
-                    className="faq-question"
-                    onClick={() => setOpenFaqIndex(isOpen ? null : index)}
-                    aria-expanded={isOpen}
+                  <i className={cat.icon}></i>
+                  <span>{cat.label}</span>
+                  <span
+                    className={`text-[11px] px-2 py-0.5 rounded-full font-extrabold ${
+                      isSelected
+                        ? 'bg-[#111111] text-[#FFD60A]'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
+                    }`}
                   >
-                    <span>{item.question}</span>
-                    <div className="faq-icon-wrapper">
-                      <i className="fas fa-chevron-down"></i>
-                    </div>
-                  </button>
-                  {isOpen && (
-                    <div className="faq-answer">
-                      <p>{item.answerText}</p>
-                      {item.bullets && item.bullets.length > 0 && (
-                        <ul className="list-disc pl-5 mt-2 space-y-1.5 text-gray-600">
-                          {item.bullets.map((b, bIdx) => (
-                            <li key={bIdx}>{b}</li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  )}
-                </div>
+                    {count}
+                  </span>
+                </button>
               );
             })}
           </div>
+
+          {/* FAQ Search Bar */}
+          <div className="faq-search-container">
+            <div className="faq-search-input-box">
+              <i className="fas fa-search faq-search-icon"></i>
+              <input
+                type="text"
+                value={faqSearchQuery}
+                onChange={(e) => setFaqSearchQuery(e.target.value)}
+                placeholder={t.faq.searchPlaceholder}
+                className="faq-search-input"
+                aria-label={t.faq.searchPlaceholder}
+              />
+              {faqSearchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setFaqSearchQuery('')}
+                  className="faq-search-clear-btn"
+                  title={t.faq.searchReset}
+                  aria-label={t.faq.searchReset}
+                >
+                  <i className="fas fa-times"></i>
+                </button>
+              )}
+            </div>
+
+            <div className="faq-search-meta">
+              <span>
+                {t.faq.searchCountLabel
+                  .replace('{count}', String(filteredFaqs.length))
+                  .replace('{total}', String(t.faq.items.length))}
+              </span>
+              {(faqSearchQuery || selectedFaqCategory !== 'all') && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFaqSearchQuery('');
+                    setSelectedFaqCategory('all');
+                  }}
+                  className="text-xs font-semibold text-yellow-600 dark:text-yellow-400 hover:underline cursor-pointer"
+                >
+                  {t.faq.searchReset}
+                </button>
+              )}
+            </div>
+          </div>
+
+          {filteredFaqs.length === 0 ? (
+            <div className="faq-empty-state">
+              <div className="faq-empty-icon">
+                <i className="fas fa-search"></i>
+              </div>
+              <h3 className="text-lg font-bold text-black dark:text-white mb-2">
+                {t.faq.noResultsTitle}
+              </h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md mx-auto mb-6">
+                {t.faq.noResultsDesc}
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFaqSearchQuery('');
+                    setSelectedFaqCategory('all');
+                  }}
+                  className="px-4 py-2 rounded-xl bg-gray-200 dark:bg-gray-750 text-black dark:text-white font-bold text-xs hover:bg-gray-300 transition cursor-pointer"
+                >
+                  <i className="fas fa-undo mr-1.5"></i> {t.faq.searchReset}
+                </button>
+                <a
+                  href="https://wa.me/6285715654183"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 rounded-xl bg-[#FFD60A] text-[#111111] font-bold text-xs hover:bg-yellow-400 transition inline-flex items-center gap-1.5"
+                >
+                  <i className="fab fa-whatsapp"></i> {t.faq.bannerCta}
+                </a>
+              </div>
+            </div>
+          ) : (
+            <div className="faq-list">
+              {filteredFaqs.map((item, index) => {
+                const isOpen = openFaqIndex === index;
+                return (
+                  <div
+                    key={item.id}
+                    className={`faq-item ${isOpen ? 'active' : ''}`}
+                  >
+                    <button
+                      className="faq-question"
+                      onClick={() => setOpenFaqIndex(isOpen ? null : index)}
+                      aria-expanded={isOpen}
+                    >
+                      <span>{item.question}</span>
+                      <div className="faq-icon-wrapper">
+                        <i className="fas fa-chevron-down"></i>
+                      </div>
+                    </button>
+                    {isOpen && (
+                      <div className="faq-answer">
+                        <p>{item.answerText}</p>
+                        {item.bullets && item.bullets.length > 0 && (
+                          <ul className="list-disc pl-5 mt-2 space-y-1.5 text-gray-600 dark:text-gray-300">
+                            {item.bullets.map((b, bIdx) => (
+                              <li key={bIdx}>{b}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Visual Trust Badges directly below each FAQ item */}
+                    <div className="faq-item-trust-footer">
+                      <div className="faq-trust-pills-row">
+                        <span
+                          className="faq-trust-pill badge-technician"
+                          title={t.faq.trustBadges.technicianSub}
+                        >
+                          <i className="fas fa-user-shield text-amber-500"></i>
+                          <span>{t.faq.trustBadges.technicianLabel}</span>
+                        </span>
+                        <span
+                          className="faq-trust-pill badge-response"
+                          title={t.faq.trustBadges.responseSub}
+                        >
+                          <i className="fas fa-bolt text-yellow-500"></i>
+                          <span>{t.faq.trustBadges.responseLabel}</span>
+                        </span>
+                        <span
+                          className="faq-trust-pill badge-guarantee"
+                          title={t.faq.trustBadges.guaranteeSub}
+                        >
+                          <i className="fas fa-award text-emerald-500"></i>
+                          <span>{t.faq.trustBadges.guaranteeLabel}</span>
+                        </span>
+                        <span
+                          className="faq-trust-pill badge-pricing"
+                          title={t.faq.trustBadges.pricingSub}
+                        >
+                          <i className="fas fa-tags text-blue-500"></i>
+                          <span>{t.faq.trustBadges.pricingLabel}</span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
           <div className="faq-cta-banner">
             <div>
@@ -1210,42 +1561,95 @@ export default function App() {
             <p className="section-subtitle">{t.blog.subtitle}</p>
           </div>
 
-          <div className="blog-grid">
-            {t.blog.articles.map((article) => (
-              <article key={article.id} className="blog-card">
-                <div className="blog-image-wrapper">
-                  <img src={article.image} alt={article.title} loading="lazy" />
-                  <div className="blog-category-tag">
-                    <i className={article.categoryIcon}></i>
-                    <span>{article.category}</span>
-                  </div>
-                </div>
+          {/* Category Filter Tags */}
+          <div className="blog-category-filter-bar mb-8 flex flex-wrap items-center justify-center gap-2.5">
+            {t.blog.categories.map((cat) => {
+              const isSelected = selectedBlogCategory === cat.id;
+              const count =
+                cat.id === 'all'
+                  ? t.blog.articles.length
+                  : t.blog.articles.filter((a) => a.categoryTag === cat.id).length;
 
-                <div className="blog-body">
-                  <div className="blog-meta">
-                    <span>
-                      <i className="far fa-calendar-alt"></i> {article.date}
-                    </span>
-                    <span>
-                      <i className="far fa-clock"></i> {article.readTime}
-                    </span>
-                  </div>
-
-                  <h3 className="blog-title">{article.title}</h3>
-                  <p className="blog-excerpt">{article.summary}</p>
-
-                  <button
-                    type="button"
-                    onClick={() => setSelectedArticleId(article.id)}
-                    className="blog-action-btn"
+              return (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => setSelectedBlogCategory(cat.id)}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs md:text-sm font-bold transition-all cursor-pointer ${
+                    isSelected
+                      ? 'bg-[#FFD60A] text-[#111111] shadow-md shadow-yellow-500/20 ring-2 ring-yellow-400 scale-[1.02]'
+                      : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-[#FFD60A] hover:text-black dark:hover:text-white'
+                  }`}
+                  aria-pressed={isSelected}
+                >
+                  <i className={cat.icon}></i>
+                  <span>{cat.label}</span>
+                  <span
+                    className={`text-[11px] px-2 py-0.5 rounded-full font-extrabold ${
+                      isSelected
+                        ? 'bg-[#111111] text-[#FFD60A]'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
+                    }`}
                   >
-                    <span>{t.blog.readMore}</span>
-                    <i className="fas fa-arrow-right"></i>
-                  </button>
-                </div>
-              </article>
-            ))}
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
           </div>
+
+          {filteredArticles.length === 0 ? (
+            <div className="text-center py-12 px-4 bg-white dark:bg-gray-800 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 max-w-md mx-auto my-6">
+              <i className="fas fa-newspaper text-3xl text-gray-400 mb-3"></i>
+              <p className="text-sm text-gray-600 dark:text-gray-300 font-medium mb-4">
+                {t.blog.noArticlesFound}
+              </p>
+              <button
+                type="button"
+                onClick={() => setSelectedBlogCategory('all')}
+                className="px-4 py-2 rounded-xl bg-[#FFD60A] text-black font-bold text-xs hover:bg-yellow-400 transition cursor-pointer"
+              >
+                {t.blog.allCategoryLabel}
+              </button>
+            </div>
+          ) : (
+            <div className="blog-grid">
+              {filteredArticles.map((article) => (
+                <article key={article.id} className="blog-card">
+                  <div className="blog-image-wrapper">
+                    <img src={article.image} alt={article.title} loading="lazy" />
+                    <div className="blog-category-tag">
+                      <i className={article.categoryIcon}></i>
+                      <span>{article.category}</span>
+                    </div>
+                  </div>
+
+                  <div className="blog-body">
+                    <div className="blog-meta">
+                      <span>
+                        <i className="far fa-calendar-alt"></i> {article.date}
+                      </span>
+                      <span>
+                        <i className="far fa-clock"></i> {article.readTime}
+                      </span>
+                    </div>
+
+                    <h3 className="blog-title">{article.title}</h3>
+                    <p className="blog-excerpt">{article.summary}</p>
+
+                    <button
+                      type="button"
+                      onClick={() => setSelectedArticleId(article.id)}
+                      className="blog-action-btn"
+                    >
+                      <span>{t.blog.readMore}</span>
+                      <i className="fas fa-arrow-right"></i>
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
 
           {/* ================= NEWSLETTER SUBSCRIPTION FORM ================= */}
           <NewsletterSubscription lang={lang} t={t.newsletter} />
@@ -1261,12 +1665,134 @@ export default function App() {
             <p className="section-subtitle">{t.gallery.subtitle}</p>
           </div>
 
+          {/* Gallery Auto-Play & Control Bar */}
+          <div className="gallery-controls-bar">
+            <div className="flex items-center gap-3 flex-wrap">
+              {/* Play / Pause Toggle Button */}
+              <button
+                type="button"
+                onClick={() => setIsGalleryAutoplay(!isGalleryAutoplay)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-xs md:text-sm transition cursor-pointer ${
+                  isGalleryAutoplay
+                    ? 'bg-[#FFD60A] text-[#111111] shadow-lg shadow-yellow-500/25 ring-2 ring-yellow-300'
+                    : 'bg-white/10 text-white hover:bg-white/20 border border-white/15'
+                }`}
+                title={isGalleryAutoplay ? t.gallery.autoplayPause : t.gallery.autoplayPlay}
+              >
+                <i className={`fas ${isGalleryAutoplay ? 'fa-pause' : 'fa-play'}`}></i>
+                <span>{isGalleryAutoplay ? t.gallery.autoplayPause : t.gallery.autoplayPlay}</span>
+                {isGalleryAutoplay && (
+                  <span className="relative flex h-2 w-2 ml-1">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-black opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-black"></span>
+                  </span>
+                )}
+              </button>
+
+              {/* Prev / Next Manual Step */}
+              <div className="flex items-center gap-1 bg-white/5 p-1 rounded-xl border border-white/10">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveGallerySpotlight((prev) => (prev - 1 + t.gallery.items.length) % t.gallery.items.length);
+                  }}
+                  className="w-8 h-8 rounded-lg bg-white/10 hover:bg-[#FFD60A] hover:text-black text-white flex items-center justify-center text-xs transition cursor-pointer"
+                  title={t.gallery.prevPhoto}
+                  aria-label={t.gallery.prevPhoto}
+                >
+                  <i className="fas fa-chevron-left"></i>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveGallerySpotlight((prev) => (prev + 1) % t.gallery.items.length);
+                  }}
+                  className="w-8 h-8 rounded-lg bg-white/10 hover:bg-[#FFD60A] hover:text-black text-white flex items-center justify-center text-xs transition cursor-pointer"
+                  title={t.gallery.nextPhoto}
+                  aria-label={t.gallery.nextPhoto}
+                >
+                  <i className="fas fa-chevron-right"></i>
+                </button>
+              </div>
+
+              {/* Current Active Indicator */}
+              <div className="text-xs text-gray-300 hidden sm:flex items-center gap-2">
+                <span className="font-semibold text-[#FFD60A]">
+                  {t.gallery.photoCounter} {activeGallerySpotlight + 1} / {t.gallery.items.length}:
+                </span>
+                <span className="truncate max-w-[180px] md:max-w-[240px] text-gray-200">
+                  {t.gallery.items[activeGallerySpotlight].title}
+                </span>
+              </div>
+            </div>
+
+            {/* Adjustable Delay Controls */}
+            <div className="flex items-center gap-3 flex-wrap">
+              <span className="text-xs text-gray-300 font-medium hidden md:inline-flex items-center gap-1.5">
+                <i className="fas fa-stopwatch text-[#FFD60A]"></i>
+                {t.gallery.delayLabel}
+              </span>
+
+              {/* Delay Presets */}
+              <div className="flex items-center gap-1 bg-white/5 p-1 rounded-xl border border-white/10 text-xs">
+                {[
+                  { delay: 2000, label: '2s' },
+                  { delay: 3500, label: '3.5s' },
+                  { delay: 5000, label: '5s' },
+                  { delay: 7000, label: '7s' },
+                ].map((item) => (
+                  <button
+                    key={item.delay}
+                    type="button"
+                    onClick={() => setGalleryDelay(item.delay)}
+                    className={`px-2.5 py-1 rounded-lg font-bold transition cursor-pointer ${
+                      galleryDelay === item.delay
+                        ? 'bg-[#FFD60A] text-[#111111]'
+                        : 'text-gray-300 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Fullscreen button for active item */}
+              <button
+                type="button"
+                onClick={() => setSelectedGalleryIndex(activeGallerySpotlight)}
+                className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold flex items-center gap-1.5 border border-white/15 transition cursor-pointer"
+                title={t.gallery.viewFullscreen}
+              >
+                <i className="fas fa-expand"></i>
+                <span className="hidden sm:inline">{t.gallery.viewFullscreen}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Progress Bar when Autoplay is active */}
+          {isGalleryAutoplay && (
+            <div className="gallery-progress-track">
+              <div
+                key={`${activeGallerySpotlight}-${galleryDelay}`}
+                className="gallery-progress-fill"
+                style={{ animationDuration: `${galleryDelay}ms` }}
+              />
+            </div>
+          )}
+
           <div className="gallery-grid">
             {t.gallery.items.map((item, index) => (
               <div
                 key={item.id}
-                className="gallery-item"
-                onClick={() => setSelectedGalleryIndex(index)}
+                className={`gallery-item ${
+                  isGalleryAutoplay && activeGallerySpotlight === index ? 'active-spotlight' : ''
+                }`}
+                onMouseEnter={() => setHoveredGalleryIndex(index)}
+                onMouseLeave={() => setHoveredGalleryIndex(null)}
+                onClick={() => {
+                  setActiveGallerySpotlight(index);
+                  setSelectedGalleryIndex(index);
+                }}
               >
                 <img src={item.imageUrl} alt={item.alt} loading="lazy" />
                 <div className="gallery-icon">
@@ -1278,6 +1804,24 @@ export default function App() {
                     <p>{item.desc}</p>
                   </div>
                 </div>
+
+                {/* Floating Preview Card on Hover */}
+                {hoveredGalleryIndex === index && (
+                  <div className="gallery-hover-preview-card hidden md:block">
+                    <img src={item.imageUrl} alt={item.alt} />
+                    <div className="gallery-hover-preview-info">
+                      <div className="gallery-hover-preview-badge">
+                        <i className="fas fa-search-plus"></i>
+                        <span>{t.gallery.previewBadge}</span>
+                      </div>
+                      <h5 className="gallery-hover-preview-title">{item.title}</h5>
+                      <p className="gallery-hover-preview-hint">
+                        <i className="fas fa-mouse-pointer mr-1 text-[#FFD60A]"></i>
+                        {t.gallery.previewClickHint}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -1298,7 +1842,7 @@ export default function App() {
             lang={lang}
             t={t.serviceMap}
             selectedDistrict={selectedMapDistrict}
-            onSelectDistrict={setSelectedMapDistrict}
+            onSelectDistrict={handleSelectDistrictFromMap}
           />
 
           <div className="area-content">
@@ -1329,22 +1873,52 @@ export default function App() {
               </div>
             </div>
 
-            <div>
+            <div id="area-search-container">
+              {/* Active District Filter Notification when a district is clicked on the map */}
+              {selectedMapDistrict && (
+                <div className="area-active-filter-badge mb-3 flex items-center justify-between bg-yellow-50 dark:bg-yellow-950/40 border border-yellow-300 dark:border-yellow-700/60 px-4 py-2.5 rounded-xl text-xs animate-fade-in shadow-xs">
+                  <div className="flex items-center gap-2 text-[#111111] dark:text-yellow-200">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#FFD60A] animate-ping"></span>
+                    <span className="font-semibold text-gray-700 dark:text-gray-300">
+                      {lang === 'en' ? 'Active District Filter:' : 'Filter Kecamatan Terpilih:'}
+                    </span>
+                    <strong className="font-extrabold text-[#111111] dark:text-[#FFD60A] text-sm">
+                      {selectedMapDistrict}
+                    </strong>
+                    <span className="text-gray-500 dark:text-gray-400 font-medium">
+                      ({filteredGroups[0]?.items.length || 0} {t.area.villagesLabel})
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleClearAreaSearch}
+                    className="text-xs font-bold text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 flex items-center gap-1.5 cursor-pointer transition px-2 py-1 rounded-md hover:bg-black/5 dark:hover:bg-white/10"
+                    title={t.area.searchReset}
+                  >
+                    <i className="fas fa-times-circle text-red-500"></i>
+                    <span>{t.area.searchReset}</span>
+                  </button>
+                </div>
+              )}
+
               <div className="area-search-box mb-4 bg-white p-3 rounded-xl border border-gray-200 flex items-center gap-3 shadow-xs">
                 <i className="fas fa-search text-gray-400 pl-2"></i>
                 <input
                   type="text"
                   placeholder={t.area.searchPlaceholder}
                   value={searchArea}
-                  onChange={(e) => setSearchArea(e.target.value)}
+                  onChange={(e) => handleSearchAreaChange(e.target.value)}
                   className="w-full text-sm outline-none text-[#111111] bg-transparent placeholder:text-gray-400"
                 />
                 {searchArea && (
                   <button
-                    onClick={() => setSearchArea('')}
-                    className="text-xs text-gray-500 hover:text-black pr-2"
+                    type="button"
+                    onClick={handleClearAreaSearch}
+                    className="text-xs font-semibold text-gray-500 hover:text-black dark:hover:text-white pr-2 cursor-pointer flex items-center gap-1"
+                    title={t.area.searchReset}
                   >
-                    {t.area.searchReset}
+                    <i className="fas fa-times"></i>
+                    <span>{t.area.searchReset}</span>
                   </button>
                 )}
               </div>
@@ -1725,6 +2299,66 @@ export default function App() {
           className="lightbox-modal"
           onClick={() => setSelectedGalleryIndex(null)}
         >
+          {/* Top Bar with Auto-Play & Counter */}
+          <div
+            className="absolute top-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3 bg-black/75 px-4 py-2 rounded-full border border-white/20 backdrop-blur-md text-white text-xs max-w-[90vw] overflow-x-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Slide Counter */}
+            <span className="font-bold text-[#FFD60A] whitespace-nowrap">
+              {t.gallery.photoCounter} {selectedGalleryIndex + 1} / {t.gallery.items.length}
+            </span>
+
+            <span className="text-white/30">|</span>
+
+            {/* Lightbox Autoplay Button */}
+            <button
+              type="button"
+              onClick={() => setIsGalleryAutoplay(!isGalleryAutoplay)}
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-full font-bold transition cursor-pointer whitespace-nowrap ${
+                isGalleryAutoplay
+                  ? 'bg-[#FFD60A] text-[#111111]'
+                  : 'bg-white/10 text-white hover:bg-white/20'
+              }`}
+              title={isGalleryAutoplay ? t.gallery.autoplayPause : t.gallery.autoplayPlay}
+            >
+              <i className={`fas ${isGalleryAutoplay ? 'fa-pause' : 'fa-play'}`}></i>
+              <span>{isGalleryAutoplay ? t.gallery.autoplayPause : t.gallery.autoplayPlay}</span>
+              <kbd className="hidden sm:inline text-[9px] px-1 py-0.5 rounded bg-black/30 font-mono ml-0.5">Space</kbd>
+            </button>
+
+            <span className="text-white/30 hidden sm:inline">|</span>
+
+            {/* Delay Selector */}
+            <div className="hidden sm:flex items-center gap-1">
+              {[2000, 3500, 5000].map((d) => (
+                <button
+                  key={d}
+                  type="button"
+                  onClick={() => setGalleryDelay(d)}
+                  className={`px-2 py-0.5 rounded text-[11px] font-bold transition cursor-pointer ${
+                    galleryDelay === d
+                      ? 'bg-[#FFD60A] text-[#111111]'
+                      : 'text-gray-300 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  {d / 1000}s
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Autoplay Progress indicator bar at top of lightbox */}
+          {isGalleryAutoplay && (
+            <div className="absolute top-0 left-0 w-full h-1 bg-white/10 z-30">
+              <div
+                key={`${selectedGalleryIndex}-${galleryDelay}`}
+                className="h-full bg-gradient-to-r from-yellow-400 to-[#FFD60A] gallery-progress-fill"
+                style={{ animationDuration: `${galleryDelay}ms` }}
+              />
+            </div>
+          )}
+
           <button
             className="lightbox-close-btn"
             onClick={(e) => {

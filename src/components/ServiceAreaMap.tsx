@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Language, TranslationData } from '../translations';
 
 export interface DistrictInfo {
@@ -17,7 +17,7 @@ export interface DistrictInfo {
   path: string;
 }
 
-const DISTRICTS_DATA: DistrictInfo[] = [
+export const DISTRICTS_DATA: DistrictInfo[] = [
   {
     id: 'utara',
     nameId: 'Cikarang Utara',
@@ -83,12 +83,51 @@ export default function ServiceAreaMap({
   selectedDistrict,
   onSelectDistrict,
 }: ServiceAreaMapProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [hoveredDistrict, setHoveredDistrict] = useState<string | null>(null);
+  const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
 
   const activeDistrictInfo =
     DISTRICTS_DATA.find((d) => d.nameId === selectedDistrict) ||
     DISTRICTS_DATA.find((d) => d.id === hoveredDistrict) ||
     null;
+
+  const hoveredDistrictInfo =
+    DISTRICTS_DATA.find((d) => d.id === hoveredDistrict) || null;
+
+  const updateTooltipCoords = (e: React.MouseEvent) => {
+    if (containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      setTooltipPos({
+        x: Math.round(e.clientX - rect.left),
+        y: Math.round(e.clientY - rect.top),
+      });
+    }
+  };
+
+  const handleDistrictMouseEnter = (districtId: string, e: React.MouseEvent) => {
+    setHoveredDistrict(districtId);
+    updateTooltipCoords(e);
+  };
+
+  const handleDistrictMouseMove = (e: React.MouseEvent) => {
+    updateTooltipCoords(e);
+  };
+
+  const handleDistrictMouseLeave = () => {
+    setHoveredDistrict(null);
+    setTooltipPos(null);
+  };
+
+  const handleDistrictFocus = (district: DistrictInfo) => {
+    setHoveredDistrict(district.id);
+    if (containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      const posX = (district.textCoords.x / 660) * rect.width;
+      const posY = (district.textCoords.y / 460) * rect.height;
+      setTooltipPos({ x: Math.round(posX), y: Math.round(posY) });
+    }
+  };
 
   const handleDistrictClick = (nameId: string) => {
     if (selectedDistrict === nameId) {
@@ -173,7 +212,7 @@ export default function ServiceAreaMap({
       {/* Grid Layout: Interactive SVG Map + Active Details Card */}
       <div className="service-map-grid">
         {/* SVG Interactive Canvas */}
-        <div className="service-map-canvas-container">
+        <div ref={containerRef} className="service-map-canvas-container relative">
           <svg
             viewBox="0 0 660 460"
             className="service-map-svg"
@@ -284,8 +323,9 @@ export default function ServiceAreaMap({
                   key={district.id}
                   className={`district-polygon-group cursor-pointer ${isActive ? 'active' : ''}`}
                   onClick={() => handleDistrictClick(district.nameId)}
-                  onMouseEnter={() => setHoveredDistrict(district.id)}
-                  onMouseLeave={() => setHoveredDistrict(null)}
+                  onMouseEnter={(e) => handleDistrictMouseEnter(district.id, e)}
+                  onMouseMove={handleDistrictMouseMove}
+                  onMouseLeave={handleDistrictMouseLeave}
                 >
                   {/* Interactive Vector Path with ARIA & Full Keyboard Navigation */}
                   <path
@@ -300,15 +340,25 @@ export default function ServiceAreaMap({
                     stroke={isActive ? '#FFD60A' : 'rgba(255, 255, 255, 0.2)'}
                     strokeWidth={isActive ? '3' : '1.5'}
                     strokeLinejoin="round"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDistrictClick(district.nameId);
+                    }}
                     onKeyDown={(e) => handlePathKeyDown(e, index, district.nameId)}
-                    onFocus={() => setHoveredDistrict(district.id)}
-                    onBlur={() => setHoveredDistrict(null)}
-                  />
+                    onFocus={() => handleDistrictFocus(district)}
+                    onBlur={handleDistrictMouseLeave}
+                  >
+                    <title>{`${districtName} — ${district.villageCount} ${lang === 'en' ? 'Villages Covered' : 'Desa / Kelurahan'}`}</title>
+                  </path>
 
                   {/* District Text Label */}
                   <g
                     transform={`translate(${district.textCoords.x}, ${district.textCoords.y})`}
-                    className="pointer-events-none text-center"
+                    className="cursor-pointer text-center"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDistrictClick(district.nameId);
+                    }}
                   >
                     <rect
                       x="-60"
@@ -344,7 +394,11 @@ export default function ServiceAreaMap({
                   {/* Pulsing Tanker Fleet Hub Pin */}
                   <g
                     transform={`translate(${district.pinCoords.x}, ${district.pinCoords.y})`}
-                    className="pointer-events-none"
+                    className="cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDistrictClick(district.nameId);
+                    }}
                   >
                     {/* Radar Pulse */}
                     <circle
@@ -372,6 +426,62 @@ export default function ServiceAreaMap({
               );
             })}
           </svg>
+
+          {/* Interactive Floating Tooltip upon District Hover */}
+          {hoveredDistrictInfo && tooltipPos && (
+            <div
+              className="district-interactive-tooltip"
+              style={{
+                left: `${tooltipPos.x}px`,
+                top: `${tooltipPos.y}px`,
+                transform: `translate(${
+                  tooltipPos.x > 330 ? '-102%' : '14px'
+                }, ${tooltipPos.y < 95 ? '16px' : '-100%'})`,
+              }}
+              role="tooltip"
+              aria-live="polite"
+            >
+              <div className="tooltip-header">
+                <span className="tooltip-badge">
+                  <i className="fas fa-map-marker-alt text-[#FFD60A] text-xs"></i>
+                  {lang === 'en' ? hoveredDistrictInfo.nameEn : hoveredDistrictInfo.nameId}
+                </span>
+                <span className="tooltip-eta">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  25-30m ETA
+                </span>
+              </div>
+
+              <div className="tooltip-village-count-box">
+                <div className="village-count-digit">
+                  {hoveredDistrictInfo.villageCount}
+                </div>
+                <div className="village-count-meta">
+                  <span className="village-count-label">
+                    {lang === 'en' ? 'Villages Covered' : 'Kelurahan & Desa'}
+                  </span>
+                  <span className="village-count-status">
+                    <i className="fas fa-check-circle text-emerald-400 text-[10px] mr-1"></i>
+                    {lang === 'en' ? '100% Rapid Coverage' : 'Terlayani Armada 24 Jam'}
+                  </span>
+                </div>
+              </div>
+
+              {hoveredDistrictInfo.landmarks.length > 0 && (
+                <div className="tooltip-landmarks-row">
+                  <span className="tooltip-landmarks-icon">📍</span>
+                  <span className="truncate max-w-[210px]">
+                    {hoveredDistrictInfo.landmarks.slice(0, 2).join(' • ')}
+                  </span>
+                </div>
+              )}
+
+              <div className="tooltip-click-hint">
+                <i className="fas fa-mouse-pointer text-[#FFD60A] text-[9px]"></i>
+                <span>{lang === 'en' ? 'Click to filter village list' : 'Klik untuk filter daftar desa'}</span>
+              </div>
+            </div>
+          )}
 
           <p className="service-map-canvas-hint">
             <i className="fas fa-info-circle mr-1 text-[#FFD60A]"></i>

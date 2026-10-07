@@ -31,6 +31,9 @@ export interface TranslationData {
     stat3Label: string;
     tag1: string;
     tag2: string;
+    floatingEmergencyBadge: string;
+    floatingEmergencySub: string;
+    floatingEmergencyStatus: string;
   };
   services: {
     badge: string;
@@ -63,15 +66,36 @@ export interface TranslationData {
     badge: string;
     title: string;
     subtitle: string;
+    searchPlaceholder: string;
+    searchReset: string;
+    searchCountLabel: string;
+    noResultsTitle: string;
+    noResultsDesc: string;
     bannerTitle: string;
     bannerSubtitle: string;
     bannerCta: string;
+    categories: {
+      id: string;
+      label: string;
+      icon: string;
+    }[];
     items: {
       id: number;
+      categoryTag: string;
       question: string;
       answerText: string;
       bullets?: string[];
     }[];
+    trustBadges: {
+      technicianLabel: string;
+      technicianSub: string;
+      responseLabel: string;
+      responseSub: string;
+      guaranteeLabel: string;
+      guaranteeSub: string;
+      pricingLabel: string;
+      pricingSub: string;
+    };
   };
   trustIndicators: {
     badge: string;
@@ -135,10 +159,19 @@ export interface TranslationData {
     modalCtaTitle: string;
     modalCtaDesc: string;
     modalCtaBtn: string;
+    filterLabel: string;
+    allCategoryLabel: string;
+    noArticlesFound: string;
+    categories: {
+      id: string;
+      label: string;
+      icon: string;
+    }[];
     articles: {
       id: number;
       slug: string;
       category: string;
+      categoryTag: string;
       categoryIcon: string;
       title: string;
       summary: string;
@@ -173,6 +206,8 @@ export interface TranslationData {
     nextPhoto: string;
     viewFullscreen: string;
     photoCounter: string;
+    previewBadge: string;
+    previewClickHint: string;
     items: {
       id: number;
       title: string;
@@ -314,6 +349,9 @@ export const translations: Record<Language, TranslationData> = {
       stat3Label: 'Pelanggan Puas',
       tag1: 'Sedot WC Bergaransi',
       tag2: 'Cepat 30 Menit',
+      floatingEmergencyBadge: 'Layanan Darurat 24/7',
+      floatingEmergencySub: 'Respon Cepat 30 Menit · Armada Siaga',
+      floatingEmergencyStatus: 'Siaga 24 Jam',
     },
     services: {
       badge: 'LAYANAN KAMI',
@@ -356,19 +394,32 @@ export const translations: Record<Language, TranslationData> = {
       title: 'Pertanyaan yang Sering Diajukan (FAQ)',
       subtitle:
         'Informasi lengkap seputar interval perawatan septic tank, tanda-tanda penampungan penuh, dan jaminan transparansi harga layanan kami.',
+      searchPlaceholder: 'Cari pertanyaan (misal: tarif, garansi, septic tank, mampet, DIY)...',
+      searchReset: 'Reset',
+      searchCountLabel: 'Menampilkan {count} dari {total} pertanyaan',
+      noResultsTitle: 'Pertanyaan Tidak Ditemukan',
+      noResultsDesc: 'Tidak ditemukan pertanyaan yang cocok dengan kata kunci pencarian Anda. Tim teknisi kami siap menjawab langsung via WhatsApp.',
       bannerTitle: 'Punya Pertanyaan Lain Terkait Masalah Kloset atau Septic Tank Anda?',
       bannerSubtitle:
         'Konsultasikan kendala saluran Anda secara gratis dengan tim teknisi kami selama 24 jam penuh.',
       bannerCta: 'Tanya Teknisi Sekarang',
+      categories: [
+        { id: 'all', label: 'Semua Topik', icon: 'fas fa-th-large' },
+        { id: 'maintenance', label: 'Maintenance', icon: 'fas fa-wrench' },
+        { id: 'emergency', label: 'Emergency', icon: 'fas fa-bolt' },
+        { id: 'pricing', label: 'Pricing', icon: 'fas fa-tags' },
+      ],
       items: [
         {
           id: 1,
+          categoryTag: 'maintenance',
           question: 'Berapa lama interval ideal untuk menguras atau sedot septic tank secara berkala?',
           answerText:
             'Untuk rumah tangga standar berpenghuni 4–6 orang, interval ideal untuk menguras septic tank adalah setiap 1 hingga 2 tahun sekali. Pengurasan teratur mencegah penumpukan lumpur tinja padat yang dapat mengkristal (tinja mati) dan menyumbat pori-pori sumur resapan tanah. Bagi tempat usaha seperti ruko, restoran, warung makan, atau kontrakan/kos-kosan dengan intensitas pemakaian tinggi, pengurasan dianjurkan dilakukan setiap 6 hingga 12 bulan sekali.',
         },
         {
           id: 2,
+          categoryTag: 'emergency',
           question: 'Apa saja tanda-tanda utama septic tank sudah penuh atau WC mulai tersumbat?',
           answerText: 'Beberapa tanda paling umum yang menunjukkan septic tank Anda perlu segera disedot meliputi:',
           bullets: [
@@ -381,24 +432,28 @@ export const translations: Record<Language, TranslationData> = {
         },
         {
           id: 3,
+          categoryTag: 'pricing',
           question: 'Bagaimana transparansi tarif dan penentuan biaya sedot WC di Mitra Bersih 24Jam?',
           answerText:
             'Kami memegang komitmen 100% transparansi harga tanpa biaya tersembunyi. Sebelum armada truk tangki meluncur ke lokasi Anda di Cikarang, rincian biaya akan disepakati dan dikonfirmasi di awal melalui telepon atau WhatsApp. Kami tidak pernah memungut biaya siluman seperti ongkos jalan terpisah atau biaya tambahan saat membuka tutup bak kontrol. Anda dapat memilih tarif hitungan per tangki penuh atau paket penanganan saluran mampet bergaransi tuntas.',
         },
         {
           id: 4,
+          categoryTag: 'emergency',
           question: 'Berapa lama waktu kedatangan tim setelah pemesanan dilakukan?',
           answerText:
             'Rata-rata waktu tempuh armada kami menuju lokasi adalah kurang lebih 30 menit setelah pesanan disepakati. Kami menyiagakan armada truk tangki di berbagai pos pangkalan strategis Cikarang (Cikarang Utara, Cikarang Selatan, Cikarang Barat, Cikarang Timur, Cikarang Pusat, hingga kawasan industri Jababeka, Lippo Cikarang, dan Deltamas) sehingga penanganan darurat dapat dilakukan secepat mungkin.',
         },
         {
           id: 5,
+          categoryTag: 'maintenance',
           question: 'Apakah proses penyedotan aman, tidak berisik, dan bebas dari bau tak sedap?',
           answerText:
             'Tentu saja! Mitra Bersih 24Jam menggunakan mesin pompa vakum modern bertekanan tinggi dengan selang penyedot spiral kedap udara (closed-circuit suction). Kotoran limbah langsung dialirkan masuk ke dalam tangki baja kedap tanpa tumpah dan tanpa menimbulkan polusi bau menyengat ke pemukiman tetangga Anda. Teknisi kami juga selalu membersihkan kembali area kerja hingga steril dan rapi.',
         },
         {
           id: 6,
+          categoryTag: 'maintenance',
           question: 'Bagaimana langkah mudah (DIY) memeriksa dan mengidentifikasi sumbatan ringan pada saluran WC atau pipa rumah?',
           answerText:
             'Anda dapat melakukan identifikasi mandiri (DIY) dengan 5 langkah praktis sebelum memanggil jasa sedot WC:',
@@ -410,7 +465,31 @@ export const translations: Record<Language, TranslationData> = {
             '5. Gunakan Plunger Manual: Pompa karet beberapa kali. Jika air tetap meluap atau muncul bau busuk pekat, segera hubungi teknisi profesional Mitra Bersih 24 Jam.',
           ],
         },
+        {
+          id: 7,
+          categoryTag: 'emergency',
+          question: 'Apakah layanan darurat tetap siaga pada malam hari, hari libur, dan akhir pekan?',
+          answerText:
+            'Ya, layanan kami beroperasi penuh 24 jam non-stop setiap hari, termasuk hari Minggu dan hari libur nasional. Tim teknisi dan supir truk tangki siap meluncur kapan saja saat WC di rumah atau pabrik Anda mengalami luapan darurat di luar jam kerja reguler.',
+        },
+        {
+          id: 8,
+          categoryTag: 'pricing',
+          question: 'Apakah tersedia jaminan garansi kerja dan faktur / kuitansi resmi?',
+          answerText:
+            'Setiap pengerjaan pelancaran pipa mampet dan pengurasan septic tank oleh Mitra Bersih 24Jam disertai jaminan garansi kerja tuntas. Kami juga menerbitkan kuitansi, faktur, dan Berita Acara Pekerjaan (BAP) resmi untuk keperluan administrasi rumah tangga maupun klaim perusahaan pabrik di kawasan industri Cikarang.',
+        },
       ],
+      trustBadges: {
+        technicianLabel: 'Teknisi Tersertifikasi',
+        technicianSub: 'Standar K3 & Berseragam',
+        responseLabel: 'Respon Cepat 24/7',
+        responseSub: 'Tiba 30 Menit ke Lokasi',
+        guaranteeLabel: 'Garansi Kerja Tuntas',
+        guaranteeSub: '100% Bebas Masalah Berulang',
+        pricingLabel: 'Tarif Transparan',
+        pricingSub: 'Tanpa Biaya Siluman',
+      },
     },
     trustIndicators: {
       badge: 'STANDAR MUTU & LEGALITAS',
@@ -583,11 +662,21 @@ export const translations: Record<Language, TranslationData> = {
       modalCtaDesc:
         'Tim teknisi Mitra Bersih 24Jam siap datang langsung dalam 30 menit dengan peralatan modern bebas bau.',
       modalCtaBtn: 'Konsultasi Masalah Ini',
+      filterLabel: 'Kategori Topik:',
+      allCategoryLabel: 'Semua Kategori',
+      noArticlesFound: 'Tidak ada artikel yang ditemukan dalam kategori ini.',
+      categories: [
+        { id: 'all', label: 'Semua Kategori', icon: 'fas fa-th-large' },
+        { id: 'maintenance', label: 'Maintenance', icon: 'fas fa-wrench' },
+        { id: 'tips', label: 'Tips', icon: 'fas fa-lightbulb' },
+        { id: 'industry', label: 'Industry News', icon: 'fas fa-industry' },
+      ],
       articles: [
         {
           id: 1,
           slug: 'penyebab-septic-tank-cepat-penuh',
-          category: 'Perawatan Septic Tank',
+          category: 'Maintenance',
+          categoryTag: 'maintenance',
           categoryIcon: 'fas fa-shield-virus',
           title: '5 Penyebab Utama Septic Tank Cepat Penuh & Cara Efektif Mencegahnya',
           summary:
@@ -625,7 +714,8 @@ export const translations: Record<Language, TranslationData> = {
         {
           id: 2,
           slug: 'panduan-merawat-pipa-plumbing-bebas-sumbatan',
-          category: 'Plumbing Maintenance',
+          category: 'Maintenance',
+          categoryTag: 'maintenance',
           categoryIcon: 'fas fa-faucet',
           title: 'Panduan Lengkap Merawat Pipa Saluran Air Rumah Bebas Sumbatan & Bebas Bau',
           summary:
@@ -663,7 +753,8 @@ export const translations: Record<Language, TranslationData> = {
         {
           id: 3,
           slug: 'tips-hemat-air-ekosistem-septic-tank',
-          category: 'Konservasi Air & Sanitasi',
+          category: 'Tips',
+          categoryTag: 'tips',
           categoryIcon: 'fas fa-tint',
           title: 'Tips Hemat Air untuk Menjaga Keseimbangan Ekosistem Septic Tank Rumah',
           summary:
@@ -698,6 +789,41 @@ export const translations: Record<Language, TranslationData> = {
               'Hemat air tidak hanya menekan tagihan PDAM atau listrik pompa air, tetapi juga memperpanjang umur fungsi septic tank rumah Anda hingga bertahun-tahun lebih awet.',
           },
         },
+        {
+          id: 4,
+          slug: 'standar-baku-mutu-limbah-industri-cikarang',
+          category: 'Industry News',
+          categoryTag: 'industry',
+          categoryIcon: 'fas fa-industry',
+          title: 'Kepatuhan Baku Mutu Limbah Cair Pabrik Kawasan Industri Cikarang & Pembuangan IPLT',
+          summary:
+            'Kawasan industri Cikarang (Jababeka, MM2100, GIIC, EJIP) menerapkan audit lingkungan berkala. Ketahui standar manifest resmi dan pembuangan legal ke IPLT pemerintah.',
+          readTime: '6 Menit Baca',
+          date: '20 Agustus 2024',
+          author: 'Divisi Regulasi Lingkungan',
+          image:
+            'https://z-cdn-media.chatglm.cn/files/c701d28f-9ce6-410f-9af1-5bdf6bd82fe4.jpg?auth_key=1891145358-f10d651607cc4ebcb600e88f06f3eda9-0-cadac15e64fade2d6e42565a9da55f4d',
+          content: {
+            intro:
+              'Operasional pabrik manufaktur dan kawasan industri di Cikarang tunduk pada pengawasan ketat Dinas Lingkungan Hidup. Pembuangan limbah domestik dan air kotor tanpa dokumen sah berisiko sanksi pembekuan izin operasional.',
+            sections: [
+              {
+                heading: '1. Kewajiban Manifest Pembuangan Resmi ke IPLT',
+                body: 'Setiap pengangkutan limbah cair dan lumpur tinja pabrik wajib mengantongi surat jalan dan bukti setor ke Instalasi Pengolahan Lumpur Tinja (IPLT) resmi pemerintah. Mitra Bersih 24Jam menyediakan dokumen Berita Acara dan faktur resmi untuk pelaporan PROPER lingkungan hidup perusahaan.',
+              },
+              {
+                heading: '2. Kalibrasi pH dan Pengendalian Bau di Lingkungan Kerja',
+                body: 'Limbah cair pabrik yang dibiarkan mengendap dapat memicu gas metana dan hidrogen sulfida berbahaya bagi pekerja. Penyedotan rutin menggunakan armada vakum tertutup mencegah insiden K3 di area pabrik.',
+              },
+              {
+                heading: '3. Kontrak Servis Berkala (Corporate Maintenance)',
+                body: 'Perusahaan skala besar mengandalkan kontrak terjadwal agar kapasitas tangki penampungan tidak mengganggu shift produksi kerja.',
+              },
+            ],
+            proTip:
+              'Pastikan vendor sedot limbah Anda memiliki legalitas NIB dan perizinan armada resmi dari dinas terkait untuk kelancaran audit kepatuhan lingkungan tahunan.',
+          },
+        },
       ],
     },
     gallery: {
@@ -718,6 +844,8 @@ export const translations: Record<Language, TranslationData> = {
       nextPhoto: 'Foto Selanjutnya',
       viewFullscreen: 'Perbesar / Layar Penuh',
       photoCounter: 'Foto',
+      previewBadge: 'Pratinjau Foto',
+      previewClickHint: 'Arahkan kursor untuk pratinjau · Klik untuk tampilan penuh',
       items: [
         {
           id: 1,
@@ -939,6 +1067,9 @@ export const translations: Record<Language, TranslationData> = {
       stat3Label: 'Satisfied Clients',
       tag1: 'Guaranteed Service',
       tag2: '30-Min Rapid Arrival',
+      floatingEmergencyBadge: '24/7 Emergency Service',
+      floatingEmergencySub: 'Rapid 30-Min Arrival · Fleet Ready',
+      floatingEmergencyStatus: 'Live & On Standby',
     },
     services: {
       badge: 'OUR SERVICES',
@@ -981,19 +1112,32 @@ export const translations: Record<Language, TranslationData> = {
       title: 'Common Questions & Answers (FAQ)',
       subtitle:
         'Essential guidelines on septic tank maintenance intervals, signs of a full tank, and our commitment to complete pricing transparency.',
+      searchPlaceholder: 'Search questions (e.g. pricing, warranty, septic tank, clogged, DIY)...',
+      searchReset: 'Reset',
+      searchCountLabel: 'Showing {count} of {total} questions',
+      noResultsTitle: 'No Matching Questions Found',
+      noResultsDesc: 'We could not find any questions matching your keywords. Contact our technical team directly on WhatsApp for immediate guidance.',
       bannerTitle: 'Have Questions About Your Facility or Home Septic System?',
       bannerSubtitle:
         'Speak directly with our senior sanitation technicians anytime 24 hours a day for complimentary technical advice.',
       bannerCta: 'Chat With Technician Now',
+      categories: [
+        { id: 'all', label: 'All Topics', icon: 'fas fa-th-large' },
+        { id: 'maintenance', label: 'Maintenance', icon: 'fas fa-wrench' },
+        { id: 'emergency', label: 'Emergency', icon: 'fas fa-bolt' },
+        { id: 'pricing', label: 'Pricing', icon: 'fas fa-tags' },
+      ],
       items: [
         {
           id: 1,
+          categoryTag: 'maintenance',
           question: 'What is the recommended interval for routine septic tank pumping?',
           answerText:
             'For a typical household with 4–6 residents, the ideal pumping interval is every 1 to 2 years. Regular maintenance prevents heavy sludge buildup from solidifying and sealing soil percolation trenches. For high-occupancy commercial properties, boarding houses, restaurants, and factory cafeterias, routine inspection and pumping is strongly recommended every 6 to 12 months.',
         },
         {
           id: 2,
+          categoryTag: 'emergency',
           question: 'What are the main warning signs that a septic tank is full or failing?',
           answerText: 'The most frequent symptoms indicating an urgent need for septic pumping include:',
           bullets: [
@@ -1006,24 +1150,28 @@ export const translations: Record<Language, TranslationData> = {
         },
         {
           id: 3,
+          categoryTag: 'pricing',
           question: 'How transparent is your pricing structure and billing process?',
           answerText:
             'We guarantee 100% upfront pricing with zero hidden surcharges. Before our tanker is dispatched to your Cikarang premises, total costs are verified and agreed via phone or WhatsApp. We never levy arbitrary fees for distance or manhole inspection covers. Clients may select full-tanker fixed rates or specialized unclogging service packages with written satisfaction warranties.',
         },
         {
           id: 4,
+          categoryTag: 'emergency',
           question: 'How quickly can your vacuum tanker arrive after booking?',
           answerText:
             'Our average transit time is approximately 30 minutes following order confirmation. We maintain strategically positioned tanker depots across Cikarang North, South, West, East, Central, and major industrial hubs including Jababeka, Lippo Cikarang, MM2100, and Deltamas for rapid emergency response.',
         },
         {
           id: 5,
+          categoryTag: 'maintenance',
           question: 'Is the pumping process safe, hygienic, and free of unpleasant odors?',
           answerText:
             'Yes, absolutely. Mitra Bersih 24Jam utilizes heavy-duty modern vacuum pumps coupled with sealed airtight spiral suction hoses (closed-circuit suction). Sludge and effluent are transferred directly into enclosed steel tankers with zero spillage and zero offensive odors affecting neighbors or adjacent factory workshops. Our technicians thoroughly disinfect the workspace upon completion.',
         },
         {
           id: 6,
+          categoryTag: 'maintenance',
           question: 'What are simple DIY steps to identify and inspect minor plumbing clogs at home?',
           answerText:
             'You can easily diagnose minor plumbing or toilet clogs using 5 simple DIY steps before calling a professional vacuum service:',
@@ -1035,7 +1183,31 @@ export const translations: Record<Language, TranslationData> = {
             '5. Use a Rubber Plunger: Apply firm plunges. If water continues to overflow or strong foul odors persist, contact Mitra Bersih 24/7 technicians for professional clearing.',
           ],
         },
+        {
+          id: 7,
+          categoryTag: 'emergency',
+          question: 'Are emergency services active during late nights, weekends, and holidays?',
+          answerText:
+            'Yes, our dispatch and vacuum tanker fleet operate 24 hours a day, 365 days a year without interruption. Whether during Sunday midnight or public holidays, emergency teams are deployed immediately when severe backups or overflows strike your property.',
+        },
+        {
+          id: 8,
+          categoryTag: 'pricing',
+          question: 'Do you provide formal written warranties, company invoices, and receipts?',
+          answerText:
+            'Every septic emptying and unclogging service performed by Mitra Bersih 24Jam is protected by a full completion guarantee. We also issue formal corporate receipts, official VAT/tax invoices, and handover certificates (BAP) required for industrial estate audit documentation.',
+        },
       ],
+      trustBadges: {
+        technicianLabel: 'Certified Technician',
+        technicianSub: 'K3 & Safety Trained Crew',
+        responseLabel: '24/7 Response',
+        responseSub: '30-Min Rapid On-Site Arrival',
+        guaranteeLabel: 'Official Warranty',
+        guaranteeSub: '100% Satisfaction Guarantee',
+        pricingLabel: 'Transparent Rates',
+        pricingSub: 'Zero Hidden Charges',
+      },
     },
     trustIndicators: {
       badge: 'QUALITY STANDARDS & COMPLIANCE',
@@ -1208,11 +1380,21 @@ export const translations: Record<Language, TranslationData> = {
       modalCtaDesc:
         'Mitra Bersih 24Jam technicians are on standby to arrive at your facility or home within 30 minutes with odorless vacuum tankers.',
       modalCtaBtn: 'Consult on This Issue',
+      filterLabel: 'Topic Category:',
+      allCategoryLabel: 'All Categories',
+      noArticlesFound: 'No articles found matching this category filter.',
+      categories: [
+        { id: 'all', label: 'All Articles', icon: 'fas fa-th-large' },
+        { id: 'maintenance', label: 'Maintenance', icon: 'fas fa-wrench' },
+        { id: 'tips', label: 'Tips & Guides', icon: 'fas fa-lightbulb' },
+        { id: 'industry', label: 'Industry News', icon: 'fas fa-industry' },
+      ],
       articles: [
         {
           id: 1,
           slug: 'penyebab-septic-tank-cepat-penuh',
-          category: 'Septic Maintenance',
+          category: 'Maintenance',
+          categoryTag: 'maintenance',
           categoryIcon: 'fas fa-shield-virus',
           title: '5 Common Reasons Septic Tanks Overflow Prematurely & How to Prevent Them',
           summary:
@@ -1250,7 +1432,8 @@ export const translations: Record<Language, TranslationData> = {
         {
           id: 2,
           slug: 'panduan-merawat-pipa-plumbing-bebas-sumbatan',
-          category: 'Plumbing Maintenance',
+          category: 'Maintenance',
+          categoryTag: 'maintenance',
           categoryIcon: 'fas fa-faucet',
           title: 'Comprehensive Guide to Keeping Residential & Commercial Drains Clog-Free',
           summary:
@@ -1288,7 +1471,8 @@ export const translations: Record<Language, TranslationData> = {
         {
           id: 3,
           slug: 'tips-hemat-air-ekosistem-septic-tank',
-          category: 'Water Conservation',
+          category: 'Tips',
+          categoryTag: 'tips',
           categoryIcon: 'fas fa-tint',
           title: 'Smart Water Conservation Practices to Protect Your Septic Tank Ecosystem',
           summary:
@@ -1323,6 +1507,41 @@ export const translations: Record<Language, TranslationData> = {
               'Conserving water not only trims utility bills, but directly extends the lifespan and efficiency of your property septic infrastructure by years.',
           },
         },
+        {
+          id: 4,
+          slug: 'standar-baku-mutu-limbah-industri-cikarang',
+          category: 'Industry News',
+          categoryTag: 'industry',
+          categoryIcon: 'fas fa-industry',
+          title: 'Industrial Wastewater Standards & Official Government IPLT Compliance in Cikarang',
+          summary:
+            'Manufacturing hubs across Cikarang (Jababeka, MM2100, GIIC, EJIP) undergo stringent environmental audits. Learn about licensed effluent transport and disposal manifests.',
+          readTime: '6 Min Read',
+          date: 'August 20, 2024',
+          author: 'Environmental Compliance Division',
+          image:
+            'https://z-cdn-media.chatglm.cn/files/c701d28f-9ce6-410f-9af1-5bdf6bd82fe4.jpg?auth_key=1891145358-f10d651607cc4ebcb600e88f06f3eda9-0-cadac15e64fade2d6e42565a9da55f4d',
+          content: {
+            intro:
+              'Industrial facilities across Cikarang operate under direct regulatory oversight from the regional Environmental Agency. Transporting commercial wastewater without formal waste manifests risks severe regulatory penalties and operating license suspensions.',
+            sections: [
+              {
+                heading: '1. Mandatory Chain-of-Custody Manifests to Government IPLT',
+                body: 'Every industrial effluent transport must carry validated chain-of-custody documentation and official deposit receipts from regional government sludge treatment facilities (IPLT). Mitra Bersih 24Jam provides formal handover records and official invoices for corporate PROPER environmental audit compliance.',
+              },
+              {
+                heading: '2. pH Balancing and Workplace Odor Elimination',
+                body: 'Industrial sludge accumulation triggers toxic hydrogen sulfide and methane build-up dangerous to shift workers. Regular vacuum pumping using sealed suction prevents hazardous workplace incidents.',
+              },
+              {
+                heading: '3. Long-Term Maintenance Service Contracts',
+                body: 'High-capacity production operations rely on scheduled preventative pumping agreements to ensure waste management never interrupts manufacturing workflows.',
+              },
+            ],
+            proTip:
+              'Always ensure your sanitary disposal vendor holds verifiable NIB enterprise licenses and environmental agency transport permits for smooth corporate audit approvals.',
+          },
+        },
       ],
     },
     gallery: {
@@ -1343,6 +1562,8 @@ export const translations: Record<Language, TranslationData> = {
       nextPhoto: 'Next Photo',
       viewFullscreen: 'Expand / Fullscreen',
       photoCounter: 'Photo',
+      previewBadge: 'Photo Preview',
+      previewClickHint: 'Hover to preview · Click for high-resolution view',
       items: [
         {
           id: 1,
