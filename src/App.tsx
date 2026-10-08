@@ -12,6 +12,7 @@ import 'swiper/css/navigation';
 import { translations, Language } from './translations';
 import LiveChatWidget from './components/LiveChatWidget';
 import ServiceAreaMap, { DISTRICTS_DATA } from './components/ServiceAreaMap';
+import ServiceAreaBarChart from './components/ServiceAreaBarChart';
 import SocialLinks from './components/SocialLinks';
 import QuickBookBar from './components/QuickBookBar';
 import NewsletterSubscription from './components/NewsletterSubscription';
@@ -94,6 +95,9 @@ export default function App() {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   const [faqSearchQuery, setFaqSearchQuery] = useState('');
   const [selectedFaqCategory, setSelectedFaqCategory] = useState<string>('all');
+  const [isListeningFaqVoice, setIsListeningFaqVoice] = useState(false);
+  const [voiceFeedback, setVoiceFeedback] = useState<string | null>(null);
+  const [voiceError, setVoiceError] = useState<string | null>(null);
   const [selectedArticleId, setSelectedArticleId] = useState<number | null>(null);
   const [selectedBlogCategory, setSelectedBlogCategory] = useState<string>('all');
   const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<number | null>(null);
@@ -116,7 +120,9 @@ export default function App() {
     const q = faqSearchQuery.trim().toLowerCase();
     return t.faq.items.filter((item) => {
       const matchCategory =
-        selectedFaqCategory === 'all' || item.categoryTag === selectedFaqCategory;
+        selectedFaqCategory === 'all' ||
+        item.categoryTag === selectedFaqCategory ||
+        (item.categoryTags && item.categoryTags.includes(selectedFaqCategory));
       if (!matchCategory) return false;
 
       if (!q) return true;
@@ -134,6 +140,18 @@ export default function App() {
     }
     return t.blog.articles.filter((article) => article.categoryTag === selectedBlogCategory);
   }, [selectedBlogCategory, t.blog.articles]);
+
+  // Helper for FAQ category metadata (icon, label)
+  const getCategoryMeta = (tag: string) => {
+    const found = t.faq.categories.find((c) => c.id === tag);
+    if (found) return found;
+    if (tag === 'pricing') return { id: 'pricing', label: 'Pricing', icon: 'fas fa-tags' };
+    if (tag === 'technical') return { id: 'technical', label: 'Technical', icon: 'fas fa-cogs' };
+    if (tag === 'general') return { id: 'general', label: 'General', icon: 'fas fa-shield-alt' };
+    if (tag === 'maintenance') return { id: 'maintenance', label: 'Maintenance', icon: 'fas fa-wrench' };
+    if (tag === 'emergency') return { id: 'emergency', label: 'Emergency', icon: 'fas fa-bolt' };
+    return { id: tag, label: tag, icon: 'fas fa-question-circle' };
+  };
 
   // Gallery auto-play timer
   useEffect(() => {
@@ -204,7 +222,7 @@ export default function App() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
 
-      const sections = ['home', 'layanan', 'tentang', 'faq', 'sertifikasi', 'blog', 'galeri', 'kontak'];
+      const sections = ['home', 'layanan', 'tentang', 'garansi', 'faq', 'sertifikasi', 'blog', 'galeri', 'kontak'];
       const scrollPos = window.scrollY + 120;
 
       for (const sectionId of sections) {
@@ -268,6 +286,66 @@ export default function App() {
         top,
         behavior: 'smooth',
       });
+    }
+  };
+
+  // Voice-to-Text Speech Recognition for FAQ Search
+  const handleToggleVoiceSearch = () => {
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      setVoiceError(t.faq.voiceNotSupported);
+      setTimeout(() => setVoiceError(null), 5000);
+      return;
+    }
+
+    if (isListeningFaqVoice) {
+      setIsListeningFaqVoice(false);
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.lang = lang === 'en' ? 'en-US' : 'id-ID';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onstart = () => {
+        setIsListeningFaqVoice(true);
+        setVoiceError(null);
+        setVoiceFeedback(t.faq.voiceListening);
+      };
+
+      recognition.onresult = (event: any) => {
+        if (event.results && event.results[0] && event.results[0][0]) {
+          const transcript = event.results[0][0].transcript.trim();
+          setFaqSearchQuery(transcript);
+          setVoiceFeedback(`${t.faq.voiceHeardPrefix} "${transcript}"`);
+          setTimeout(() => setVoiceFeedback(null), 6000);
+        }
+        setIsListeningFaqVoice(false);
+      };
+
+      recognition.onerror = (event: any) => {
+        setIsListeningFaqVoice(false);
+        if (event.error !== 'no-speech') {
+          setVoiceError(t.faq.voiceErrorMsg);
+          setTimeout(() => setVoiceError(null), 5000);
+        } else {
+          setVoiceFeedback(null);
+        }
+      };
+
+      recognition.onend = () => {
+        setIsListeningFaqVoice(false);
+      };
+
+      recognition.start();
+    } catch {
+      setIsListeningFaqVoice(false);
+      setVoiceError(t.faq.voiceErrorMsg);
+      setTimeout(() => setVoiceError(null), 5000);
     }
   };
 
@@ -432,6 +510,15 @@ export default function App() {
                 onClick={(e) => scrollToSection(e, 'tentang')}
               >
                 {t.nav.about}
+              </a>
+            </li>
+            <li>
+              <a
+                href="#garansi"
+                className={activeSection === 'garansi' ? 'active' : ''}
+                onClick={(e) => scrollToSection(e, 'garansi')}
+              >
+                {t.nav.warranty}
               </a>
             </li>
             <li>
@@ -996,6 +1083,89 @@ export default function App() {
         </div>
       </section>
 
+      {/* ================= GARANSI PEKERJAAN (30-DAY GUARANTEE & 3 PILLARS) ================= */}
+      <section className="warranty-section" id="garansi">
+        <div className="container-custom">
+          <div className="section-header">
+            <span className="section-badge">{t.warranty.badge}</span>
+            <h2 className="section-title">{t.warranty.title}</h2>
+            <p className="section-subtitle">{t.warranty.subtitle}</p>
+          </div>
+
+          {/* 30-Day Golden Guarantee Seal Banner */}
+          <div className="warranty-seal-banner mb-10">
+            <div className="warranty-seal-badge">
+              <span className="seal-duration">{t.warranty.sealDuration}</span>
+              <span className="seal-label">{t.warranty.sealBadge}</span>
+            </div>
+            <div className="warranty-seal-content">
+              <h3 className="warranty-seal-title">
+                <i className="fas fa-certificate text-[#FFD60A] mr-2"></i>
+                {t.warranty.sealTitle}
+              </h3>
+              <p className="warranty-seal-desc">{t.warranty.sealDesc}</p>
+            </div>
+          </div>
+
+          {/* 3 Key Pillars Grid: Tuntas (Complete), Higienis (Hygienic), Cepat (Fast) */}
+          <div className="warranty-pillars-grid">
+            {t.warranty.pillars.map((pillar) => (
+              <div key={pillar.id} className={`warranty-pillar-card pillar-${pillar.id}`}>
+                <div className="pillar-header">
+                  <div className="pillar-icon-box">
+                    <i className={pillar.icon}></i>
+                  </div>
+                  <span className="pillar-badge">{pillar.badge}</span>
+                </div>
+
+                <div className="pillar-body">
+                  <h3 className="pillar-title">{pillar.pillarName}</h3>
+                  <h4 className="pillar-subtitle">{pillar.subtitle}</h4>
+                  <p className="pillar-desc">{pillar.desc}</p>
+
+                  <div className="pillar-points-list">
+                    {pillar.points.map((pt, pIdx) => (
+                      <div key={pIdx} className="pillar-point-row">
+                        <i className="fas fa-check-circle pillar-check-icon"></i>
+                        <span>{pt}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Direct WhatsApp Warranty Claim & Support CTA Bar */}
+          <div className="warranty-claim-banner mt-10">
+            <div className="claim-banner-text">
+              <h4>
+                <i className="fas fa-shield-alt text-[#FFD60A] mr-2"></i>
+                {t.warranty.claimBannerTitle}
+              </h4>
+              <p>{t.warranty.claimBannerSubtitle}</p>
+            </div>
+            <a
+              href={`https://wa.me/6285715654183?text=${encodeURIComponent(
+                lang === 'en'
+                  ? 'Hello Mitra Bersih, I would like to inquire about or file a 30-day service warranty claim in Cikarang.'
+                  : 'Halo Mitra Bersih, saya ingin menanyakan atau klaim garansi pekerjaan 30 hari di Cikarang.'
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="warranty-claim-btn"
+            >
+              <i className="fab fa-whatsapp text-lg"></i>
+              <span>{t.warranty.claimBannerBtn}</span>
+            </a>
+          </div>
+
+          <p className="warranty-terms-note text-center mt-4 text-xs text-gray-500 dark:text-gray-400">
+            {t.warranty.termsNote}
+          </p>
+        </div>
+      </section>
+
       {/* ================= FAQ ================= */}
       <section className="faq-section" id="faq">
         <div className="container-custom">
@@ -1005,62 +1175,29 @@ export default function App() {
             <p className="section-subtitle">{t.faq.subtitle}</p>
           </div>
 
-          {/* FAQ Category Filter Tabs */}
-          <div className="faq-category-tabs-bar mb-6 flex flex-wrap items-center justify-center gap-2.5">
-            {t.faq.categories.map((cat) => {
-              const isSelected = selectedFaqCategory === cat.id;
-              const count =
-                cat.id === 'all'
-                  ? t.faq.items.length
-                  : t.faq.items.filter((item) => item.categoryTag === cat.id).length;
-
-              return (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() => {
-                    setSelectedFaqCategory(cat.id);
-                    setOpenFaqIndex(null);
-                  }}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs md:text-sm font-bold transition-all cursor-pointer ${
-                    isSelected
-                      ? 'bg-[#FFD60A] text-[#111111] shadow-md shadow-yellow-500/20 ring-2 ring-yellow-400 scale-[1.02]'
-                      : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-[#FFD60A] hover:text-black dark:hover:text-white'
-                  }`}
-                  aria-pressed={isSelected}
-                >
-                  <i className={cat.icon}></i>
-                  <span>{cat.label}</span>
-                  <span
-                    className={`text-[11px] px-2 py-0.5 rounded-full font-extrabold ${
-                      isSelected
-                        ? 'bg-[#111111] text-[#FFD60A]'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
-                    }`}
-                  >
-                    {count}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* FAQ Search Bar */}
-          <div className="faq-search-container">
-            <div className="faq-search-input-box">
+          {/* FAQ Search Bar with Voice-to-Text Input */}
+          <div className="faq-search-container mb-6">
+            <div className={`faq-search-input-box ${isListeningFaqVoice ? 'faq-search-box-listening' : ''}`}>
               <i className="fas fa-search faq-search-icon"></i>
               <input
                 type="text"
                 value={faqSearchQuery}
-                onChange={(e) => setFaqSearchQuery(e.target.value)}
-                placeholder={t.faq.searchPlaceholder}
+                onChange={(e) => {
+                  setFaqSearchQuery(e.target.value);
+                  setVoiceFeedback(null);
+                }}
+                placeholder={isListeningFaqVoice ? t.faq.voiceListening : t.faq.searchPlaceholder}
                 className="faq-search-input"
                 aria-label={t.faq.searchPlaceholder}
               />
+
               {faqSearchQuery && (
                 <button
                   type="button"
-                  onClick={() => setFaqSearchQuery('')}
+                  onClick={() => {
+                    setFaqSearchQuery('');
+                    setVoiceFeedback(null);
+                  }}
                   className="faq-search-clear-btn"
                   title={t.faq.searchReset}
                   aria-label={t.faq.searchReset}
@@ -1068,28 +1205,182 @@ export default function App() {
                   <i className="fas fa-times"></i>
                 </button>
               )}
+
+              {/* Voice-to-Text Microphone Button */}
+              <button
+                type="button"
+                onClick={handleToggleVoiceSearch}
+                className={`faq-voice-search-btn ${isListeningFaqVoice ? 'listening' : ''}`}
+                title={isListeningFaqVoice ? t.faq.voiceListening : t.faq.voiceSearchBtn}
+                aria-label={isListeningFaqVoice ? t.faq.voiceListening : t.faq.voiceSearchBtn}
+              >
+                {isListeningFaqVoice ? (
+                  <span className="faq-voice-pulse-indicator">
+                    <span className="faq-voice-pulse-ring"></span>
+                    <i className="fas fa-microphone-lines text-red-500 animate-pulse"></i>
+                  </span>
+                ) : (
+                  <i className="fas fa-microphone"></i>
+                )}
+              </button>
             </div>
 
-            <div className="faq-search-meta">
-              <span>
+            {/* Live Listening Voice Feedback Banner */}
+            {isListeningFaqVoice && (
+              <div className="faq-voice-listening-banner">
+                <div className="flex items-center gap-2">
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+                  </span>
+                  <span className="font-extrabold text-[#111111] dark:text-[#FFD60A] text-xs">
+                    {t.faq.voiceListening}
+                  </span>
+                </div>
+                <p className="text-[11px] text-gray-600 dark:text-gray-300 mt-1">
+                  {t.faq.voiceListeningHint}
+                </p>
+              </div>
+            )}
+
+            {/* Voice Success / Query Feedback Pill */}
+            {!isListeningFaqVoice && voiceFeedback && (
+              <div className="faq-voice-feedback-pill">
+                <div className="flex items-center gap-1.5 text-xs text-yellow-900 dark:text-yellow-300 font-semibold">
+                  <i className="fas fa-volume-high text-[#FFD60A]"></i>
+                  <span>{voiceFeedback}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setVoiceFeedback(null)}
+                  className="text-gray-400 hover:text-black dark:hover:text-white text-xs cursor-pointer ml-2"
+                  title="Tutup"
+                >
+                  <i className="fas fa-times"></i>
+                </button>
+              </div>
+            )}
+
+            {/* Voice Error Notification */}
+            {voiceError && (
+              <div className="faq-voice-error-pill">
+                <i className="fas fa-exclamation-circle text-red-500 text-xs"></i>
+                <span className="text-xs text-red-700 dark:text-red-300 font-medium">
+                  {voiceError}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setVoiceError(null)}
+                  className="ml-auto text-gray-400 hover:text-black dark:hover:text-white text-xs cursor-pointer"
+                  title="Tutup"
+                >
+                  <i className="fas fa-times"></i>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* FAQ Category Filter Tabs positioned directly above the questions */}
+          <div className="faq-category-tabs-wrapper mb-6">
+            <div className="flex items-center justify-between gap-2 mb-3 max-w-[920px] mx-auto px-1">
+              <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+                <i className="fas fa-filter text-yellow-500 text-[11px]"></i>
+                {lang === 'en' ? 'Filter by Category' : 'Filter Kategori FAQ'}
+              </span>
+              <span className="text-xs text-gray-400 font-medium hidden sm:inline">
                 {t.faq.searchCountLabel
                   .replace('{count}', String(filteredFaqs.length))
                   .replace('{total}', String(t.faq.items.length))}
               </span>
-              {(faqSearchQuery || selectedFaqCategory !== 'all') && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFaqSearchQuery('');
-                    setSelectedFaqCategory('all');
-                  }}
-                  className="text-xs font-semibold text-yellow-600 dark:text-yellow-400 hover:underline cursor-pointer"
-                >
-                  {t.faq.searchReset}
-                </button>
-              )}
+            </div>
+
+            <div
+              role="tablist"
+              aria-label="Kategori FAQ"
+              className="faq-category-tabs-bar flex flex-wrap items-center justify-center gap-2 md:gap-2.5 max-w-[920px] mx-auto"
+            >
+              {t.faq.categories.map((cat) => {
+                const isSelected = selectedFaqCategory === cat.id;
+                const count =
+                  cat.id === 'all'
+                    ? t.faq.items.length
+                    : t.faq.items.filter(
+                        (item) =>
+                          item.categoryTag === cat.id ||
+                          (item.categoryTags && item.categoryTags.includes(cat.id))
+                      ).length;
+
+                return (
+                  <button
+                    key={cat.id}
+                    role="tab"
+                    type="button"
+                    aria-selected={isSelected}
+                    onClick={() => {
+                      setSelectedFaqCategory(cat.id);
+                      setOpenFaqIndex(null);
+                    }}
+                    className={`faq-cat-tab-btn flex items-center gap-2 px-4 py-2.5 rounded-full text-xs md:text-sm font-bold transition-all cursor-pointer ${
+                      isSelected
+                        ? 'bg-[#FFD60A] text-[#111111] shadow-md shadow-yellow-500/25 ring-2 ring-yellow-400 scale-[1.02]'
+                        : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-[#FFD60A] hover:text-black dark:hover:text-white'
+                    }`}
+                  >
+                    <i className={cat.icon}></i>
+                    <span>{cat.label}</span>
+                    <span
+                      className={`text-[11px] px-2 py-0.5 rounded-full font-extrabold ${
+                        isSelected
+                          ? 'bg-[#111111] text-[#FFD60A]'
+                          : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
+                      }`}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
+
+          {/* Active Category Filter Alert / Status Banner */}
+          {(selectedFaqCategory !== 'all' || faqSearchQuery) && (
+            <div className="faq-active-filter-alert max-w-[920px] mx-auto mb-5 px-4 py-2.5 rounded-xl bg-yellow-50 dark:bg-yellow-950/40 border border-yellow-300 dark:border-yellow-700/60 flex items-center justify-between text-xs animate-fade-in shadow-xs">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="w-2 h-2 rounded-full bg-[#FFD60A] animate-ping"></span>
+                <span className="text-gray-600 dark:text-gray-300 font-medium">
+                  {lang === 'en' ? 'Active Filter:' : 'Filter Aktif:'}
+                </span>
+                {selectedFaqCategory !== 'all' && (
+                  <span className="inline-flex items-center gap-1.5 font-extrabold text-[#111111] dark:text-[#FFD60A] bg-yellow-200/60 dark:bg-yellow-900/50 px-2.5 py-0.5 rounded-full">
+                    <i className={getCategoryMeta(selectedFaqCategory).icon}></i>
+                    {getCategoryMeta(selectedFaqCategory).label}
+                  </span>
+                )}
+                {faqSearchQuery && (
+                  <span className="text-gray-700 dark:text-gray-300 font-semibold">
+                    &ldquo;{faqSearchQuery}&rdquo;
+                  </span>
+                )}
+                <span className="text-gray-500 dark:text-gray-400 font-medium">
+                  ({filteredFaqs.length} {lang === 'en' ? 'questions found' : 'pertanyaan ditemukan'})
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedFaqCategory('all');
+                  setFaqSearchQuery('');
+                  setOpenFaqIndex(null);
+                }}
+                className="text-xs font-bold text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 flex items-center gap-1 cursor-pointer transition ml-2 flex-shrink-0"
+                title={t.faq.searchReset}
+              >
+                <i className="fas fa-times-circle text-red-500"></i>
+                <span>{lang === 'en' ? 'Reset' : 'Reset'}</span>
+              </button>
+            </div>
+          )}
 
           {filteredFaqs.length === 0 ? (
             <div className="faq-empty-state">
@@ -1127,6 +1418,7 @@ export default function App() {
             <div className="faq-list">
               {filteredFaqs.map((item, index) => {
                 const isOpen = openFaqIndex === index;
+                const catMeta = getCategoryMeta(item.categoryTag);
                 return (
                   <div
                     key={item.id}
@@ -1137,7 +1429,15 @@ export default function App() {
                       onClick={() => setOpenFaqIndex(isOpen ? null : index)}
                       aria-expanded={isOpen}
                     >
-                      <span>{item.question}</span>
+                      <div className="faq-question-text-wrapper">
+                        <div className="faq-question-badges">
+                          <span className={`faq-category-badge badge-${item.categoryTag}`}>
+                            <i className={catMeta.icon}></i>
+                            <span>{catMeta.label}</span>
+                          </span>
+                        </div>
+                        <span className="faq-question-title">{item.question}</span>
+                      </div>
                       <div className="faq-icon-wrapper">
                         <i className="fas fa-chevron-down"></i>
                       </div>
@@ -1845,6 +2145,16 @@ export default function App() {
             onSelectDistrict={handleSelectDistrictFromMap}
           />
 
+          {/* Villages per District Bar Chart (Recharts) */}
+          <ServiceAreaBarChart
+            areaGroups={AREA_GROUPS}
+            selectedDistrict={selectedMapDistrict}
+            onSelectDistrict={handleSelectDistrictFromMap}
+            theme={theme}
+            lang={lang}
+            t={t.area}
+          />
+
           <div className="area-content">
             <div className="area-illustration">
               <i className="fas fa-map-marked-alt icon-big"></i>
@@ -2048,6 +2358,98 @@ export default function App() {
       {/* ================= FOOTER ================= */}
       <footer>
         <div className="container-custom">
+          {/* Social Media Engagement Section */}
+          <div className="footer-social-showcase">
+            <div className="footer-social-header">
+              <span className="footer-social-badge">
+                <i className="fas fa-share-nodes text-[#FFD60A] mr-1.5"></i>
+                {t.footer.socialBadge}
+              </span>
+              <h3 className="footer-social-title">{t.footer.socialTitle}</h3>
+              <p className="footer-social-desc">{t.footer.socialSubtitle}</p>
+            </div>
+
+            <div className="footer-social-cards-grid">
+              {/* Facebook Link Card */}
+              <a
+                href="https://facebook.com/mitrabersih24jam"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer-social-card card-facebook group"
+                aria-label="Facebook Mitra Bersih 24 Jam"
+              >
+                <div className="social-card-icon facebook-icon">
+                  <i className="fab fa-facebook-f"></i>
+                </div>
+                <div className="social-card-content">
+                  <div className="social-card-top">
+                    <span className="platform-name">Facebook</span>
+                    <span className="social-verified-badge" title="Verified Account">
+                      <i className="fas fa-check-circle"></i>
+                    </span>
+                  </div>
+                  <span className="social-handle">@mitrabersih24jam</span>
+                  <span className="social-action-cta">
+                    <span>{t.footer.followFacebook}</span>
+                    <i className="fas fa-arrow-up-right-from-square text-[10px]"></i>
+                  </span>
+                </div>
+              </a>
+
+              {/* Instagram Link Card */}
+              <a
+                href="https://instagram.com/mitrabersih24jam"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer-social-card card-instagram group"
+                aria-label="Instagram Mitra Bersih 24 Jam"
+              >
+                <div className="social-card-icon instagram-icon">
+                  <i className="fab fa-instagram"></i>
+                </div>
+                <div className="social-card-content">
+                  <div className="social-card-top">
+                    <span className="platform-name">Instagram</span>
+                    <span className="social-verified-badge" title="Verified Account">
+                      <i className="fas fa-check-circle"></i>
+                    </span>
+                  </div>
+                  <span className="social-handle">@mitrabersih24jam</span>
+                  <span className="social-action-cta">
+                    <span>{t.footer.followInstagram}</span>
+                    <i className="fas fa-arrow-up-right-from-square text-[10px]"></i>
+                  </span>
+                </div>
+              </a>
+
+              {/* TikTok Link Card */}
+              <a
+                href="https://tiktok.com/@mitrabersih24jam"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer-social-card card-tiktok group"
+                aria-label="TikTok Mitra Bersih 24 Jam"
+              >
+                <div className="social-card-icon tiktok-icon">
+                  <i className="fab fa-tiktok"></i>
+                </div>
+                <div className="social-card-content">
+                  <div className="social-card-top">
+                    <span className="platform-name">TikTok</span>
+                    <span className="social-verified-badge" title="Verified Account">
+                      <i className="fas fa-check-circle"></i>
+                    </span>
+                  </div>
+                  <span className="social-handle">@mitrabersih24jam</span>
+                  <span className="social-action-cta">
+                    <span>{t.footer.followTiktok}</span>
+                    <i className="fas fa-arrow-up-right-from-square text-[10px]"></i>
+                  </span>
+                </div>
+              </a>
+            </div>
+          </div>
+
           <div className="footer-grid">
             <div className="footer-col">
               <h4>{t.footer.contactTitle}</h4>
@@ -2101,22 +2503,41 @@ export default function App() {
               </div>
 
               <div className="social-row">
-                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                <a
+                  href="https://facebook.com/mitrabersih24jam"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Facebook Mitra Bersih 24 Jam"
+                  title="Facebook Mitra Bersih"
+                >
                   <i className="fab fa-facebook-f"></i>
                 </a>
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                <a
+                  href="https://instagram.com/mitrabersih24jam"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram Mitra Bersih 24 Jam"
+                  title="Instagram Mitra Bersih"
+                >
                   <i className="fab fa-instagram"></i>
+                </a>
+                <a
+                  href="https://tiktok.com/@mitrabersih24jam"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="TikTok Mitra Bersih 24 Jam"
+                  title="TikTok Mitra Bersih"
+                >
+                  <i className="fab fa-tiktok"></i>
                 </a>
                 <a
                   href="https://wa.me/6285715654183"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="WhatsApp"
+                  aria-label="WhatsApp Hotline"
+                  title="WhatsApp"
                 >
                   <i className="fab fa-whatsapp"></i>
-                </a>
-                <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
-                  <i className="fab fa-tiktok"></i>
                 </a>
               </div>
             </div>
@@ -2148,6 +2569,11 @@ export default function App() {
                 <li>
                   <a href="#tentang" onClick={(e) => scrollToSection(e, 'tentang')}>
                     <i className="fas fa-chevron-right"></i> {t.nav.about}
+                  </a>
+                </li>
+                <li>
+                  <a href="#garansi" onClick={(e) => scrollToSection(e, 'garansi')}>
+                    <i className="fas fa-chevron-right"></i> {t.nav.warranty}
                   </a>
                 </li>
                 <li>

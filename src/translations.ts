@@ -10,6 +10,7 @@ export interface TranslationData {
     home: string;
     services: string;
     about: string;
+    warranty: string;
     faq: string;
     certifications: string;
     blog: string;
@@ -62,6 +63,28 @@ export interface TranslationData {
     card4Title: string;
     card4Desc: string;
   };
+  warranty: {
+    badge: string;
+    title: string;
+    subtitle: string;
+    sealBadge: string;
+    sealDuration: string;
+    sealTitle: string;
+    sealDesc: string;
+    pillars: {
+      id: string;
+      pillarName: string;
+      badge: string;
+      subtitle: string;
+      desc: string;
+      icon: string;
+      points: string[];
+    }[];
+    claimBannerTitle: string;
+    claimBannerSubtitle: string;
+    claimBannerBtn: string;
+    termsNote: string;
+  };
   faq: {
     badge: string;
     title: string;
@@ -74,6 +97,12 @@ export interface TranslationData {
     bannerTitle: string;
     bannerSubtitle: string;
     bannerCta: string;
+    voiceSearchBtn: string;
+    voiceListening: string;
+    voiceListeningHint: string;
+    voiceNotSupported: string;
+    voiceHeardPrefix: string;
+    voiceErrorMsg: string;
     categories: {
       id: string;
       label: string;
@@ -82,6 +111,7 @@ export interface TranslationData {
     items: {
       id: number;
       categoryTag: string;
+      categoryTags?: string[];
       question: string;
       answerText: string;
       bullets?: string[];
@@ -231,6 +261,13 @@ export interface TranslationData {
     notFoundSuffix: string;
     villagesLabel: string;
     moreLabel: string;
+    chartBadge: string;
+    chartTitle: string;
+    chartSubtitle: string;
+    chartYAxisLabel: string;
+    chartBarLabel: string;
+    chartTotalBadge: string;
+    chartClickHint: string;
   };
   form: {
     badge: string;
@@ -257,6 +294,12 @@ export interface TranslationData {
     getDirectionsBtn: string;
     servicesTitle: string;
     othersTitle: string;
+    socialBadge: string;
+    socialTitle: string;
+    socialSubtitle: string;
+    followFacebook: string;
+    followInstagram: string;
+    followTiktok: string;
     rightsReserved: string;
   };
   chatWidget: {
@@ -327,6 +370,7 @@ export const translations: Record<Language, TranslationData> = {
       home: 'Home',
       services: 'Layanan',
       about: 'Tentang Kami',
+      warranty: 'Garansi',
       faq: 'FAQ',
       certifications: 'Standar Mutu',
       blog: 'Tips & Artikel',
@@ -389,6 +433,67 @@ export const translations: Record<Language, TranslationData> = {
       card4Desc:
         'Layanan sedot wc cikarang bergaransi dan bebas bau. Ditangani tukang wc mampet cikarang berpengalaman dengan truk tangki modern, menjaga kebersihan lokasi kerja Anda sepenuhnya.',
     },
+    warranty: {
+      badge: 'GARANSI PEKERJAAN',
+      title: 'Garansi Pekerjaan 30 Hari & Komitmen Kepuasan',
+      subtitle:
+        'Ketenangan pikiran Anda adalah prioritas utama kami. Setiap layanan sedot septic tank dan pelancaran pipa mampet di Cikarang dilindungi oleh jaminan kepuasan 30 hari servis ulang gratis tanpa syarat rumit.',
+      sealBadge: '100% SERVICE GUARANTEE',
+      sealDuration: '30 HARI',
+      sealTitle: 'Garansi Servis Ulang Gratis 30 Hari',
+      sealDesc:
+        'Jika kloset atau saluran pembuangan yang kami tangani mengalami sumbatan berulang dalam waktu 30 hari sejak tanggal pengerjaan, teknisi kami akan datang kembali untuk menangani hingga tuntas tanpa biaya tambahan sepeser pun!',
+      pillars: [
+        {
+          id: 'tuntas',
+          pillarName: 'Tuntas (Complete)',
+          badge: 'Pilar 01 · Hasil Tuntas',
+          subtitle: 'Bebas Mampet & Uji Aliran Debit Penuh',
+          desc:
+            'Kami menuntaskan masalah hingga ke akar penyebabnya, bukan sekadar penanganan sementara. Saluran diuji coba bersama Anda menggunakan debit air tinggi sebelum teknisi meninggalkan lokasi untuk memastikan aliran 100% lancar.',
+          icon: 'fas fa-circle-check',
+          points: [
+            'Uji aliran debit tinggi (flow test) di hadapan pemilik rumah',
+            'Pembersihan kerak pipa tuntas dengan spiral rodder baja',
+            'Garansi servis ulang gratis jika mampet berulang dalam 30 hari',
+          ],
+        },
+        {
+          id: 'higienis',
+          pillarName: 'Higienis (Hygienic)',
+          badge: 'Pilar 02 · Bersih & Steril',
+          subtitle: 'Tanpa Bau, Tanpa Tumpahan & Disinfeksi',
+          desc:
+            'Menjaga kebersihan hunian Anda dengan selang spiral kedap udara (closed-circuit) bertekanan tinggi. Bebas polusi bau menyengat, lantai kerja dicuci bersih, dan disemprot disinfektan pembasmi kuman setelah pengerjaan selesai.',
+          icon: 'fas fa-shield-virus',
+          points: [
+            'Sirkulasi vakum spiral tertutup tanpa risiko ceceran kotoran',
+            'Penyemprotan disinfektan pembasmi kuman pasca pengerjaan',
+            'Pembuangan limbah resmi 100% ke IPLT Pemkab Bekasi',
+          ],
+        },
+        {
+          id: 'cepat',
+          pillarName: 'Cepat (Fast)',
+          badge: 'Pilar 03 · Respon Kilat',
+          subtitle: 'Tiba 30 Menit & Klaim Garansi Instan',
+          desc:
+            'Armada tangki siaga 24 jam non-stop di seluruh pos kecamatan Cikarang. Respon pesan instan dan waktu tempuh rata-rata 30 menit. Proses klaim garansi sangat mudah tanpa birokrasi, cukup hubungi WhatsApp resmi kami.',
+          icon: 'fas fa-bolt-lightning',
+          points: [
+            'Siaga 24 jam non-stop tiba rata-rata 30 menit ke lokasi',
+            'Klaim garansi mudah & instan cukup kirim 1 chat WhatsApp',
+            'Prioritas penanganan darurat untuk pemegang kuitansi garansi',
+          ],
+        },
+      ],
+      claimBannerTitle: 'Perlu Klaim Garansi atau Butuh Servis Bergaransi Sekarang?',
+      claimBannerSubtitle:
+        'Cukup sebutkan nomor pesanan atau nomor telepon Anda, teknisi siaga Mitra Bersih segera meluncur ke lokasi dalam 30 menit.',
+      claimBannerBtn: 'Klaim Garansi / Jadwalkan Servis via WhatsApp',
+      termsNote:
+        '*Garansi pekerjaan 30 hari berlaku sejak tanggal pengerjaan selesai untuk pengurasan septic tank dan pelancaran pipa mampet. Berlaku untuk seluruh wilayah perumahan, ruko, kantor, dan kawasan industri se-Cikarang.',
+    },
     faq: {
       badge: 'TANYA JAWAB',
       title: 'Pertanyaan yang Sering Diajukan (FAQ)',
@@ -403,16 +508,25 @@ export const translations: Record<Language, TranslationData> = {
       bannerSubtitle:
         'Konsultasikan kendala saluran Anda secara gratis dengan tim teknisi kami selama 24 jam penuh.',
       bannerCta: 'Tanya Teknisi Sekarang',
+      voiceSearchBtn: 'Cari dengan Suara (Voice-to-Text)',
+      voiceListening: 'Mendengarkan suara Anda...',
+      voiceListeningHint: 'Katakan misalnya: "biaya sedot", "garansi 30 hari", "septic tank penuh", atau "wc mampet"',
+      voiceNotSupported: 'Browser Anda belum mendukung input suara. Silakan ketik langsung pada kolom pencarian.',
+      voiceHeardPrefix: 'Pencarian suara:',
+      voiceErrorMsg: 'Suara tidak terdeteksi atau izin mikrofon belum aktif. Silakan coba kembali.',
       categories: [
         { id: 'all', label: 'Semua Topik', icon: 'fas fa-th-large' },
+        { id: 'pricing', label: 'Pricing', icon: 'fas fa-tags' },
+        { id: 'technical', label: 'Technical', icon: 'fas fa-cogs' },
+        { id: 'general', label: 'General', icon: 'fas fa-shield-alt' },
         { id: 'maintenance', label: 'Maintenance', icon: 'fas fa-wrench' },
         { id: 'emergency', label: 'Emergency', icon: 'fas fa-bolt' },
-        { id: 'pricing', label: 'Pricing', icon: 'fas fa-tags' },
       ],
       items: [
         {
           id: 1,
           categoryTag: 'maintenance',
+          categoryTags: ['maintenance', 'general'],
           question: 'Berapa lama interval ideal untuk menguras atau sedot septic tank secara berkala?',
           answerText:
             'Untuk rumah tangga standar berpenghuni 4–6 orang, interval ideal untuk menguras septic tank adalah setiap 1 hingga 2 tahun sekali. Pengurasan teratur mencegah penumpukan lumpur tinja padat yang dapat mengkristal (tinja mati) dan menyumbat pori-pori sumur resapan tanah. Bagi tempat usaha seperti ruko, restoran, warung makan, atau kontrakan/kos-kosan dengan intensitas pemakaian tinggi, pengurasan dianjurkan dilakukan setiap 6 hingga 12 bulan sekali.',
@@ -420,6 +534,7 @@ export const translations: Record<Language, TranslationData> = {
         {
           id: 2,
           categoryTag: 'emergency',
+          categoryTags: ['emergency', 'general', 'technical'],
           question: 'Apa saja tanda-tanda utama septic tank sudah penuh atau WC mulai tersumbat?',
           answerText: 'Beberapa tanda paling umum yang menunjukkan septic tank Anda perlu segera disedot meliputi:',
           bullets: [
@@ -433,6 +548,7 @@ export const translations: Record<Language, TranslationData> = {
         {
           id: 3,
           categoryTag: 'pricing',
+          categoryTags: ['pricing', 'general'],
           question: 'Bagaimana transparansi tarif dan penentuan biaya sedot WC di Mitra Bersih 24Jam?',
           answerText:
             'Kami memegang komitmen 100% transparansi harga tanpa biaya tersembunyi. Sebelum armada truk tangki meluncur ke lokasi Anda di Cikarang, rincian biaya akan disepakati dan dikonfirmasi di awal melalui telepon atau WhatsApp. Kami tidak pernah memungut biaya siluman seperti ongkos jalan terpisah atau biaya tambahan saat membuka tutup bak kontrol. Anda dapat memilih tarif hitungan per tangki penuh atau paket penanganan saluran mampet bergaransi tuntas.',
@@ -440,20 +556,23 @@ export const translations: Record<Language, TranslationData> = {
         {
           id: 4,
           categoryTag: 'emergency',
+          categoryTags: ['emergency', 'general'],
           question: 'Berapa lama waktu kedatangan tim setelah pemesanan dilakukan?',
           answerText:
             'Rata-rata waktu tempuh armada kami menuju lokasi adalah kurang lebih 30 menit setelah pesanan disepakati. Kami menyiagakan armada truk tangki di berbagai pos pangkalan strategis Cikarang (Cikarang Utara, Cikarang Selatan, Cikarang Barat, Cikarang Timur, Cikarang Pusat, hingga kawasan industri Jababeka, Lippo Cikarang, dan Deltamas) sehingga penanganan darurat dapat dilakukan secepat mungkin.',
         },
         {
           id: 5,
-          categoryTag: 'maintenance',
+          categoryTag: 'technical',
+          categoryTags: ['technical', 'maintenance', 'general'],
           question: 'Apakah proses penyedotan aman, tidak berisik, dan bebas dari bau tak sedap?',
           answerText:
             'Tentu saja! Mitra Bersih 24Jam menggunakan mesin pompa vakum modern bertekanan tinggi dengan selang penyedot spiral kedap udara (closed-circuit suction). Kotoran limbah langsung dialirkan masuk ke dalam tangki baja kedap tanpa tumpah dan tanpa menimbulkan polusi bau menyengat ke pemukiman tetangga Anda. Teknisi kami juga selalu membersihkan kembali area kerja hingga steril dan rapi.',
         },
         {
           id: 6,
-          categoryTag: 'maintenance',
+          categoryTag: 'technical',
+          categoryTags: ['technical', 'maintenance', 'general'],
           question: 'Bagaimana langkah mudah (DIY) memeriksa dan mengidentifikasi sumbatan ringan pada saluran WC atau pipa rumah?',
           answerText:
             'Anda dapat melakukan identifikasi mandiri (DIY) dengan 5 langkah praktis sebelum memanggil jasa sedot WC:',
@@ -468,6 +587,7 @@ export const translations: Record<Language, TranslationData> = {
         {
           id: 7,
           categoryTag: 'emergency',
+          categoryTags: ['emergency', 'general'],
           question: 'Apakah layanan darurat tetap siaga pada malam hari, hari libur, dan akhir pekan?',
           answerText:
             'Ya, layanan kami beroperasi penuh 24 jam non-stop setiap hari, termasuk hari Minggu dan hari libur nasional. Tim teknisi dan supir truk tangki siap meluncur kapan saja saat WC di rumah atau pabrik Anda mengalami luapan darurat di luar jam kerja reguler.',
@@ -475,9 +595,42 @@ export const translations: Record<Language, TranslationData> = {
         {
           id: 8,
           categoryTag: 'pricing',
+          categoryTags: ['pricing', 'general'],
           question: 'Apakah tersedia jaminan garansi kerja dan faktur / kuitansi resmi?',
           answerText:
-            'Setiap pengerjaan pelancaran pipa mampet dan pengurasan septic tank oleh Mitra Bersih 24Jam disertai jaminan garansi kerja tuntas. Kami juga menerbitkan kuitansi, faktur, dan Berita Acara Pekerjaan (BAP) resmi untuk keperluan administrasi rumah tangga maupun klaim perusahaan pabrik di kawasan industri Cikarang.',
+            'Setiap pengerjaan pelancaran pipa mampet dan pengurasan septic tank oleh Mitra Bersih 24Jam disertai jaminan garansi kerja 30 hari tuntas. Kami juga menerbitkan kuitansi, faktur pajak/PPN, dan Berita Acara Pekerjaan (BAP) resmi untuk keperluan administrasi rumah tangga maupun klaim perusahaan pabrik di kawasan industri Cikarang.',
+        },
+        {
+          id: 9,
+          categoryTag: 'technical',
+          categoryTags: ['technical', 'maintenance'],
+          question: 'Bagaimana peralatan mechanical rodder dan water jetting bekerja mengatasi pipa mampet parah?',
+          answerText:
+            'Untuk pipa yang tersumbat lemak beku mengeras atau akar tanaman, kami mengerahkan mesin mechanical spiral rodder berkekuatan tinggi serta unit hydro water jetting bertekanan hingga 200 bar. Spiral baja fleksibel berputar memotong sumbatan di dalam pipa tanpa merusak dinding paralon PVC, dan semprotan air jet membilas bersih sisa kerak minyak hingga dinding pipa kembali bersih seperti baru.',
+        },
+        {
+          id: 10,
+          categoryTag: 'pricing',
+          categoryTags: ['pricing', 'general'],
+          question: 'Apa saja metode pembayaran yang diterima dan apakah bisa tempo invoice untuk perusahaan/pabrik?',
+          answerText:
+            'Kami menyediakan metode pembayaran fleksibel: tunai (cash) langsung kepada teknisi setelah pekerjaan selesai, transfer bank instan (BCA, Mandiri, BRI, BNI), serta QRIS. Khusus pelanggan korporat, kawasan industri, dan manajemen gedung di Cikarang, kami melayani sistem pembayaran tempo dengan Purchase Order (PO), Invoice, dan Faktur Pajak resmi.',
+        },
+        {
+          id: 11,
+          categoryTag: 'technical',
+          categoryTags: ['technical', 'general'],
+          question: 'Berapa panjang maksimal jangkauan selang untuk rumah di gang sempit atau perumahan padat Cikarang?',
+          answerText:
+            'Armada truk tangki Mitra Bersih 24Jam membawa selang vakum modular bertekanan tinggi yang dapat disambung hingga jangkauan 100 meter dari titik parkir mobil tangki. Teknisi kami terbiasa melayani lokasi rumah di dalam gang sempit pemukiman warga se-Cikarang dengan aman tanpa hambatan sirkulasi.',
+        },
+        {
+          id: 12,
+          categoryTag: 'pricing',
+          categoryTags: ['pricing', 'general'],
+          question: 'Apakah ada biaya tambahan untuk pembongkaran dan penutupan kembali cor tutup septic tank?',
+          answerText:
+            'Tidak ada biaya tersembunyi. Layanan pencarian titik letak bak septic tank, pembukaan cor tutup bak kontrol secara hati-hati, hingga penutupan plester semen kembali secara rapi sudah termasuk dalam paket harga layanan terpadu teknisi kami.',
         },
       ],
       trustBadges: {
@@ -933,6 +1086,14 @@ export const translations: Record<Language, TranslationData> = {
       villagesLabel: 'Kelurahan/Desa',
       moreLabel:
         'Juga melayani Cibitung, Tambun, Sertajaya, Jababeka, Lippo Cikarang, Deltamas & Kabupaten Bekasi',
+      chartBadge: 'DATA CAKUPAN WILAYAH',
+      chartTitle: 'Grafik Distribusi Desa & Kelurahan per Kecamatan Cikarang',
+      chartSubtitle:
+        'Visualisasi jumlah desa/kelurahan yang dilayani armada tangki Mitra Bersih di 5 kecamatan Cikarang',
+      chartYAxisLabel: 'Jumlah Desa/Kelurahan',
+      chartBarLabel: 'Kelurahan / Desa',
+      chartTotalBadge: 'Total 43 Desa / Kelurahan Tercover 100%',
+      chartClickHint: 'Klik batang grafik untuk memfilter daftar desa di bawah',
     },
     form: {
       badge: 'ESTIMASI BIAYA GRATIS',
@@ -973,6 +1134,13 @@ export const translations: Record<Language, TranslationData> = {
       getDirectionsBtn: 'Buka Petunjuk Arah (Google Maps)',
       servicesTitle: 'Layanan',
       othersTitle: 'Lainnya',
+      socialBadge: 'KOMUNITAS & MEDIA SOSIAL',
+      socialTitle: 'Ikuti Akun Resmi Mitra Bersih 24 Jam',
+      socialSubtitle:
+        'Terhubung dengan kami untuk tips sanitasi harian, video edukasi pencegahan WC mampet, dokumentasi armada di Cikarang, dan promo diskon berkala.',
+      followFacebook: 'Ikuti di Facebook',
+      followInstagram: 'Follow di Instagram',
+      followTiktok: 'Tonton di TikTok',
       rightsReserved: 'Mitra Bersih 24Jam. All Rights Reserved.',
     },
     chatWidget: {
@@ -1045,6 +1213,7 @@ export const translations: Record<Language, TranslationData> = {
       home: 'Home',
       services: 'Services',
       about: 'Why Us',
+      warranty: 'Warranty',
       faq: 'FAQ',
       certifications: 'Compliance',
       blog: 'Tips & Articles',
@@ -1107,6 +1276,67 @@ export const translations: Record<Language, TranslationData> = {
       card4Desc:
         'Fully warrantied, odor-free sanitation delivered by certified K3 safety technicians operating state-of-the-art closed vacuum tankers, preserving absolute cleanliness at your premises.',
     },
+    warranty: {
+      badge: 'SERVICE WARRANTY',
+      title: '30-Day Workmanship Guarantee & Service Commitment',
+      subtitle:
+        'Your complete peace of mind is our highest priority. Every septic tank pumping and drain clearing service in Cikarang is backed by our official 30-day satisfaction warranty with zero-cost re-clearing.',
+      sealBadge: '100% SERVICE GUARANTEE',
+      sealDuration: '30 DAYS',
+      sealTitle: '30-Day Free Re-Service Guarantee',
+      sealDesc:
+        'If the serviced toilet or drainage line experiences a recurring blockage within 30 days of work completion, our technicians will return promptly to re-clear it completely free of charge—no hidden fees, no questions asked!',
+      pillars: [
+        {
+          id: 'tuntas',
+          pillarName: 'Tuntas (Complete)',
+          badge: 'Pillar 01 · Full Resolution',
+          subtitle: 'Zero Residual Blockage & High-Flow Testing',
+          desc:
+            'We resolve blockages down to their deepest root cause rather than applying temporary band-aids. All serviced pipelines undergo a full high-volume water flow test alongside you before our crew departs to verify 100% unrestricted flow.',
+          icon: 'fas fa-circle-check',
+          points: [
+            'High-flow water drainage test performed in front of client',
+            'Full pipe descaling using industrial heavy-duty mechanical rodders',
+            '30-day free re-service guarantee if blockage returns',
+          ],
+        },
+        {
+          id: 'higienis',
+          pillarName: 'Higienis (Hygienic)',
+          badge: 'Pillar 02 · Spotless & Disinfected',
+          subtitle: 'Zero Odor Pollution & Area Sanitization',
+          desc:
+            'Safeguarding your property hygiene with sealed airtight spiral suction hoses (closed-circuit vacuum). No offensive odors, zero foul spillage, and work floors are washed spotless and disinfected upon completion.',
+          icon: 'fas fa-shield-virus',
+          points: [
+            'Closed-circuit spiral vacuum prevents any waste splatter',
+            'Antibacterial disinfectant wash applied after every job',
+            '100% legal waste disposal at official Bekasi Regency IPLT facilities',
+          ],
+        },
+        {
+          id: 'cepat',
+          pillarName: 'Cepat (Fast)',
+          badge: 'Pillar 03 · Rapid Response',
+          subtitle: '30-Min On-Site & Instant WhatsApp Claim',
+          desc:
+            'Vacuum tanker units stationed 24/7 across all Cikarang districts. Instant message response and ~30 minute arrival. Submitting a warranty claim is effortless without red tape—simply contact our official WhatsApp line.',
+          icon: 'fas fa-bolt-lightning',
+          points: [
+            '24/7 rapid standby fleet arriving in ~30 minutes across Cikarang',
+            'Frictionless warranty claim via a single WhatsApp message',
+            'Priority emergency dispatch for registered warranty holders',
+          ],
+        },
+      ],
+      claimBannerTitle: 'Need to Claim a Warranty or Book Guaranteed Service Now?',
+      claimBannerSubtitle:
+        'Simply provide your booking receipt number or phone number, and our Mitra Bersih technicians will be dispatched immediately.',
+      claimBannerBtn: 'Claim Warranty / Schedule via WhatsApp',
+      termsNote:
+        '*The 30-day workmanship guarantee is valid from the service completion date for septic tank pumping and mechanical drain clearing works. Applies across all residential complexes, shophouses, corporate offices, and industrial facilities in Cikarang.',
+    },
     faq: {
       badge: 'FREQUENTLY ASKED QUESTIONS',
       title: 'Common Questions & Answers (FAQ)',
@@ -1121,16 +1351,25 @@ export const translations: Record<Language, TranslationData> = {
       bannerSubtitle:
         'Speak directly with our senior sanitation technicians anytime 24 hours a day for complimentary technical advice.',
       bannerCta: 'Chat With Technician Now',
+      voiceSearchBtn: 'Voice Search (Voice-to-Text)',
+      voiceListening: 'Listening to your voice...',
+      voiceListeningHint: 'Speak clearly, e.g.: "pumping price", "30-day warranty", "full septic tank", or "clogged toilet"',
+      voiceNotSupported: 'Speech recognition is not supported in this browser. Please type directly into the search bar.',
+      voiceHeardPrefix: 'Voice search query:',
+      voiceErrorMsg: 'Voice not recognized or microphone access was denied. Please try again.',
       categories: [
         { id: 'all', label: 'All Topics', icon: 'fas fa-th-large' },
+        { id: 'pricing', label: 'Pricing', icon: 'fas fa-tags' },
+        { id: 'technical', label: 'Technical', icon: 'fas fa-cogs' },
+        { id: 'general', label: 'General', icon: 'fas fa-shield-alt' },
         { id: 'maintenance', label: 'Maintenance', icon: 'fas fa-wrench' },
         { id: 'emergency', label: 'Emergency', icon: 'fas fa-bolt' },
-        { id: 'pricing', label: 'Pricing', icon: 'fas fa-tags' },
       ],
       items: [
         {
           id: 1,
           categoryTag: 'maintenance',
+          categoryTags: ['maintenance', 'general'],
           question: 'What is the recommended interval for routine septic tank pumping?',
           answerText:
             'For a typical household with 4–6 residents, the ideal pumping interval is every 1 to 2 years. Regular maintenance prevents heavy sludge buildup from solidifying and sealing soil percolation trenches. For high-occupancy commercial properties, boarding houses, restaurants, and factory cafeterias, routine inspection and pumping is strongly recommended every 6 to 12 months.',
@@ -1138,6 +1377,7 @@ export const translations: Record<Language, TranslationData> = {
         {
           id: 2,
           categoryTag: 'emergency',
+          categoryTags: ['emergency', 'general', 'technical'],
           question: 'What are the main warning signs that a septic tank is full or failing?',
           answerText: 'The most frequent symptoms indicating an urgent need for septic pumping include:',
           bullets: [
@@ -1151,6 +1391,7 @@ export const translations: Record<Language, TranslationData> = {
         {
           id: 3,
           categoryTag: 'pricing',
+          categoryTags: ['pricing', 'general'],
           question: 'How transparent is your pricing structure and billing process?',
           answerText:
             'We guarantee 100% upfront pricing with zero hidden surcharges. Before our tanker is dispatched to your Cikarang premises, total costs are verified and agreed via phone or WhatsApp. We never levy arbitrary fees for distance or manhole inspection covers. Clients may select full-tanker fixed rates or specialized unclogging service packages with written satisfaction warranties.',
@@ -1158,20 +1399,23 @@ export const translations: Record<Language, TranslationData> = {
         {
           id: 4,
           categoryTag: 'emergency',
+          categoryTags: ['emergency', 'general'],
           question: 'How quickly can your vacuum tanker arrive after booking?',
           answerText:
             'Our average transit time is approximately 30 minutes following order confirmation. We maintain strategically positioned tanker depots across Cikarang North, South, West, East, Central, and major industrial hubs including Jababeka, Lippo Cikarang, MM2100, and Deltamas for rapid emergency response.',
         },
         {
           id: 5,
-          categoryTag: 'maintenance',
+          categoryTag: 'technical',
+          categoryTags: ['technical', 'maintenance', 'general'],
           question: 'Is the pumping process safe, hygienic, and free of unpleasant odors?',
           answerText:
             'Yes, absolutely. Mitra Bersih 24Jam utilizes heavy-duty modern vacuum pumps coupled with sealed airtight spiral suction hoses (closed-circuit suction). Sludge and effluent are transferred directly into enclosed steel tankers with zero spillage and zero offensive odors affecting neighbors or adjacent factory workshops. Our technicians thoroughly disinfect the workspace upon completion.',
         },
         {
           id: 6,
-          categoryTag: 'maintenance',
+          categoryTag: 'technical',
+          categoryTags: ['technical', 'maintenance', 'general'],
           question: 'What are simple DIY steps to identify and inspect minor plumbing clogs at home?',
           answerText:
             'You can easily diagnose minor plumbing or toilet clogs using 5 simple DIY steps before calling a professional vacuum service:',
@@ -1186,6 +1430,7 @@ export const translations: Record<Language, TranslationData> = {
         {
           id: 7,
           categoryTag: 'emergency',
+          categoryTags: ['emergency', 'general'],
           question: 'Are emergency services active during late nights, weekends, and holidays?',
           answerText:
             'Yes, our dispatch and vacuum tanker fleet operate 24 hours a day, 365 days a year without interruption. Whether during Sunday midnight or public holidays, emergency teams are deployed immediately when severe backups or overflows strike your property.',
@@ -1193,9 +1438,42 @@ export const translations: Record<Language, TranslationData> = {
         {
           id: 8,
           categoryTag: 'pricing',
+          categoryTags: ['pricing', 'general'],
           question: 'Do you provide formal written warranties, company invoices, and receipts?',
           answerText:
-            'Every septic emptying and unclogging service performed by Mitra Bersih 24Jam is protected by a full completion guarantee. We also issue formal corporate receipts, official VAT/tax invoices, and handover certificates (BAP) required for industrial estate audit documentation.',
+            'Every septic emptying and unclogging service performed by Mitra Bersih 24Jam is protected by a 30-day workmanship satisfaction guarantee. We also issue formal corporate receipts, official VAT/tax invoices, and handover certificates (BAP) required for industrial estate audit documentation.',
+        },
+        {
+          id: 9,
+          categoryTag: 'technical',
+          categoryTags: ['technical', 'maintenance'],
+          question: 'How do mechanical rodder machines and high-pressure water jetting units clear severe blockages?',
+          answerText:
+            'For pipes blocked by solidified grease, construction debris, or tree roots, we deploy heavy-duty flexible spiral rodders and hydro jetting rigs operating up to 200 bar. The high-tensile steel spiral cuts through obstinate obstructions without fracturing PVC pipe walls, and the hydro jetting nozzle power-washes scale buildup off interior pipe walls back to factory-clean diameter.',
+        },
+        {
+          id: 10,
+          categoryTag: 'pricing',
+          categoryTags: ['pricing', 'general'],
+          question: 'What payment methods do you accept and do you offer invoice terms for factories/companies?',
+          answerText:
+            'We provide versatile payment options: cash on-site to technicians upon job completion, instant mobile banking transfers (BCA, Mandiri, BRI, BNI), and QRIS. For corporate accounts, industrial plants, and commercial property managers in Cikarang, we offer billing invoice terms backed by formal Purchase Orders (PO), delivery orders, and official tax invoices.',
+        },
+        {
+          id: 11,
+          categoryTag: 'technical',
+          categoryTags: ['technical', 'general'],
+          question: 'What is the maximum hose distance reach for residential properties located inside narrow alleys in Cikarang?',
+          answerText:
+            'Our vacuum tankers carry modular reinforced spiral hoses extendable up to 100 meters from the street parking point. Our technicians routinely service households inside narrow alleys and densely populated housing complexes across Cikarang without issue.',
+        },
+        {
+          id: 12,
+          categoryTag: 'pricing',
+          categoryTags: ['pricing', 'general'],
+          question: 'Is there an extra fee for locating, opening, and resealing the septic tank concrete inspection cover?',
+          answerText:
+            'There are no hidden fees. Locating the inspection lid, chipping open the concrete inspection seal, and resealing it neatly with cement mortar are all included in our standard transparent service package.',
         },
       ],
       trustBadges: {
@@ -1651,6 +1929,14 @@ export const translations: Record<Language, TranslationData> = {
       villagesLabel: 'Sub-districts / Villages',
       moreLabel:
         'Also covering Cibitung, Tambun, Sertajaya, Jababeka 1-7, Lippo Cikarang, Deltamas & Bekasi Regency',
+      chartBadge: 'REGIONAL COVERAGE DATA',
+      chartTitle: 'Villages & Wards Distribution per District in Cikarang',
+      chartSubtitle:
+        'Visual bar chart representation of villages serviced by Mitra Bersih vacuum tankers across 5 Cikarang districts',
+      chartYAxisLabel: 'Number of Villages',
+      chartBarLabel: 'Villages / Wards',
+      chartTotalBadge: 'Total 43 Villages / Wards Covered 100%',
+      chartClickHint: 'Click any bar to filter village list below',
     },
     form: {
       badge: 'COMPLIMENTARY RATE ESTIMATE',
@@ -1691,6 +1977,13 @@ export const translations: Record<Language, TranslationData> = {
       getDirectionsBtn: 'Get Directions (Google Maps)',
       servicesTitle: 'Services',
       othersTitle: 'Quick Links',
+      socialBadge: 'COMMUNITY & SOCIAL MEDIA',
+      socialTitle: 'Follow Our Official Social Media Channels',
+      socialSubtitle:
+        'Connect with us for daily plumbing care tips, video guides on preventing toilet clogs, fleet operations in Cikarang, and special promotional rates.',
+      followFacebook: 'Follow on Facebook',
+      followInstagram: 'Follow on Instagram',
+      followTiktok: 'Watch on TikTok',
       rightsReserved: 'Mitra Bersih 24Jam. All Rights Reserved.',
     },
     chatWidget: {

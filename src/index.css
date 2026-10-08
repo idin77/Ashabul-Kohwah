@@ -1076,6 +1076,390 @@ section {
   line-height: 1.6;
 }
 
+/* === GARANSI PEKERJAAN (30-DAY WARRANTY & 3 PILLARS) === */
+.warranty-section {
+  background: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 30-Day Golden Guarantee Seal Banner */
+.warranty-seal-banner {
+  max-width: 980px;
+  margin: 0 auto 36px;
+  background: linear-gradient(135deg, rgba(255, 214, 10, 0.12) 0%, rgba(255, 214, 10, 0.04) 100%);
+  border: 2px solid rgba(255, 214, 10, 0.45);
+  border-radius: 24px;
+  padding: 28px 36px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  box-shadow: 0 10px 30px rgba(255, 214, 10, 0.08);
+  position: relative;
+}
+
+.warranty-seal-badge {
+  flex-shrink: 0;
+  width: 96px;
+  height: 96px;
+  background: linear-gradient(135deg, #FFD60A 0%, #F59E0B 100%);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.35);
+  border: 4px solid #FFFFFF;
+}
+
+.warranty-seal-badge .seal-duration {
+  font-size: 20px;
+  font-weight: 900;
+  color: #111111;
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+
+.warranty-seal-badge .seal-label {
+  font-size: 8px;
+  font-weight: 800;
+  color: #111111;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 3px;
+  line-height: 1.1;
+  max-width: 80px;
+}
+
+.warranty-seal-content {
+  flex-grow: 1;
+}
+
+.warranty-seal-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--black);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.warranty-seal-desc {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--gray);
+  margin: 0;
+}
+
+/* 3 Key Pillars Grid */
+.warranty-pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+.warranty-pillar-card {
+  background: var(--light-gray);
+  border-radius: 22px;
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  transition: all 0.35s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.warranty-pillar-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: transparent;
+  transition: all 0.35s ease;
+}
+
+.warranty-pillar-card.pillar-tuntas::before {
+  background: linear-gradient(90deg, #FFD60A, #F59E0B);
+}
+
+.warranty-pillar-card.pillar-higienis::before {
+  background: linear-gradient(90deg, #10B981, #059669);
+}
+
+.warranty-pillar-card.pillar-cepat::before {
+  background: linear-gradient(90deg, #3B82F6, #2563EB);
+}
+
+.warranty-pillar-card:hover {
+  transform: translateY(-6px);
+  background: var(--white);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08);
+  border-color: rgba(255, 214, 10, 0.5);
+}
+
+.pillar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.pillar-icon-box {
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  transition: transform 0.3s ease;
+}
+
+.pillar-tuntas .pillar-icon-box {
+  background: rgba(255, 214, 10, 0.2);
+  color: #B45309;
+}
+
+.pillar-higienis .pillar-icon-box {
+  background: rgba(16, 185, 129, 0.18);
+  color: #059669;
+}
+
+.pillar-cepat .pillar-icon-box {
+  background: rgba(59, 130, 246, 0.18);
+  color: #2563EB;
+}
+
+.warranty-pillar-card:hover .pillar-icon-box {
+  transform: scale(1.08) rotate(-4deg);
+}
+
+.pillar-badge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 10px;
+  border-radius: 50px;
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--gray);
+}
+
+.pillar-title {
+  font-size: 21px;
+  font-weight: 800;
+  color: var(--black);
+  margin-bottom: 6px;
+}
+
+.pillar-subtitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: #D97706;
+  margin-bottom: 12px;
+}
+
+.pillar-higienis .pillar-subtitle {
+  color: #059669;
+}
+
+.pillar-cepat .pillar-subtitle {
+  color: #2563EB;
+}
+
+.pillar-desc {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--gray);
+  margin-bottom: 20px;
+}
+
+.pillar-points-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px dashed var(--border);
+}
+
+.pillar-point-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--black);
+  font-weight: 500;
+}
+
+.pillar-check-icon {
+  margin-top: 3px;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.pillar-tuntas .pillar-check-icon {
+  color: #D97706;
+}
+
+.pillar-higienis .pillar-check-icon {
+  color: #10B981;
+}
+
+.pillar-cepat .pillar-check-icon {
+  color: #3B82F6;
+}
+
+/* Warranty Claim Banner */
+.warranty-claim-banner {
+  max-width: 980px;
+  margin: 40px auto 0;
+  background: linear-gradient(135deg, #111111 0%, #1F2937 100%);
+  color: #FFFFFF;
+  border-radius: 20px;
+  padding: 24px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 214, 10, 0.25);
+}
+
+.claim-banner-text h4 {
+  font-size: 18px;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.claim-banner-text p {
+  font-size: 13px;
+  color: #9CA3AF;
+  margin: 0;
+}
+
+.warranty-claim-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #FFD60A;
+  color: #111111;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(255, 214, 10, 0.35);
+}
+
+.warranty-claim-btn:hover {
+  background: #FACC15;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 214, 10, 0.5);
+  color: #000000;
+}
+
+.warranty-terms-note {
+  max-width: 860px;
+  margin: 16px auto 0;
+  line-height: 1.5;
+}
+
+/* Dark mode rules for warranty section */
+[data-theme="dark"] .warranty-section {
+  background: #111418;
+}
+
+[data-theme="dark"] .warranty-seal-banner {
+  background: rgba(255, 214, 10, 0.05);
+  border-color: rgba(255, 214, 10, 0.3);
+}
+
+[data-theme="dark"] .warranty-seal-badge {
+  border-color: #1E232A;
+}
+
+[data-theme="dark"] .warranty-seal-title {
+  color: #FFFFFF;
+}
+
+[data-theme="dark"] .warranty-seal-desc {
+  color: #9CA3AF;
+}
+
+[data-theme="dark"] .warranty-pillar-card {
+  background: #1A1F26;
+  border-color: #2D3748;
+}
+
+[data-theme="dark"] .warranty-pillar-card:hover {
+  background: #202731;
+  border-color: rgba(255, 214, 10, 0.6);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .pillar-badge {
+  background: rgba(255, 255, 255, 0.08);
+  color: #9CA3AF;
+}
+
+[data-theme="dark"] .pillar-title {
+  color: #FFFFFF;
+}
+
+[data-theme="dark"] .pillar-point-row {
+  color: #E5E7EB;
+}
+
+[data-theme="dark"] .pillar-points-list {
+  border-color: #374151;
+}
+
+/* Responsive queries */
+@media (max-width: 992px) {
+  .warranty-pillars-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .warranty-seal-banner {
+    padding: 24px;
+    gap: 20px;
+  }
+  .warranty-claim-banner {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px 20px;
+  }
+  .claim-banner-text h4 {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .warranty-pillars-grid {
+    grid-template-columns: 1fr;
+  }
+  .warranty-seal-banner {
+    flex-direction: column;
+    text-align: center;
+  }
+  .warranty-seal-title {
+    justify-content: center;
+  }
+}
+
 /* === FAQ === */
 .faq-section {
   background: var(--light-gray);
@@ -1141,6 +1525,112 @@ section {
   background: rgba(0, 0, 0, 0.05);
 }
 
+/* Voice-to-Text Search Microphone Button */
+.faq-voice-search-btn {
+  background: none;
+  border: none;
+  color: #6B7280;
+  font-size: 15px;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 6px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.faq-voice-search-btn:hover {
+  color: var(--black);
+  background: rgba(255, 214, 10, 0.25);
+  transform: scale(1.08);
+}
+
+.faq-voice-search-btn.listening {
+  color: #EF4444;
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.faq-search-box-listening {
+  border-color: #EF4444 !important;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15) !important;
+}
+
+.faq-voice-pulse-indicator {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.faq-voice-pulse-ring {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.25);
+  animation: faqVoicePing 1.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes faqVoicePing {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.faq-voice-listening-banner {
+  margin-top: 10px;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(255, 214, 10, 0.08) 100%);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 14px;
+  padding: 10px 14px;
+}
+
+.faq-voice-feedback-pill {
+  margin-top: 10px;
+  background: rgba(255, 214, 10, 0.12);
+  border: 1px solid rgba(255, 214, 10, 0.4);
+  border-radius: 12px;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.faq-voice-error-pill {
+  margin-top: 10px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+[data-theme="dark"] .faq-voice-search-btn {
+  color: #9CA3AF;
+}
+
+[data-theme="dark"] .faq-voice-search-btn:hover {
+  color: #FFD60A;
+  background: rgba(255, 214, 10, 0.15);
+}
+
+[data-theme="dark"] .faq-voice-search-btn.listening {
+  color: #F87171;
+  background: rgba(239, 68, 68, 0.2);
+}
+
 .faq-search-meta {
   display: flex;
   justify-content: space-between;
@@ -1176,6 +1666,130 @@ section {
   align-items: center;
   justify-content: center;
   margin: 0 auto 16px;
+}
+
+/* FAQ Category Tabs Wrapper & Buttons */
+.faq-category-tabs-wrapper {
+  max-width: 920px;
+  margin: 0 auto 24px;
+}
+
+.faq-cat-tab-btn {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.faq-cat-tab-btn:hover {
+  transform: translateY(-2px);
+}
+
+.faq-active-filter-alert {
+  transition: all 0.25s ease;
+}
+
+/* FAQ Question Content & Category Badges */
+.faq-question-text-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  flex: 1;
+}
+
+.faq-question-badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.faq-category-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  line-height: 1.2;
+  transition: all 0.2s ease;
+}
+
+.faq-category-badge i {
+  font-size: 9.5px;
+}
+
+.faq-category-badge.badge-pricing {
+  background: rgba(59, 130, 246, 0.12);
+  color: #1D4ED8;
+  border: 1px solid rgba(59, 130, 246, 0.28);
+}
+
+.faq-category-badge.badge-technical {
+  background: rgba(16, 185, 129, 0.12);
+  color: #047857;
+  border: 1px solid rgba(16, 185, 129, 0.28);
+}
+
+.faq-category-badge.badge-general {
+  background: rgba(139, 92, 246, 0.12);
+  color: #6D28D9;
+  border: 1px solid rgba(139, 92, 246, 0.28);
+}
+
+.faq-category-badge.badge-maintenance {
+  background: rgba(245, 158, 11, 0.12);
+  color: #B45309;
+  border: 1px solid rgba(245, 158, 11, 0.28);
+}
+
+.faq-category-badge.badge-emergency {
+  background: rgba(239, 68, 68, 0.12);
+  color: #B91C1C;
+  border: 1px solid rgba(239, 68, 68, 0.28);
+}
+
+[data-theme="dark"] .faq-category-badge.badge-pricing {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93C5FD;
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+[data-theme="dark"] .faq-category-badge.badge-technical {
+  background: rgba(16, 185, 129, 0.2);
+  color: #6EE7B7;
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+[data-theme="dark"] .faq-category-badge.badge-general {
+  background: rgba(139, 92, 246, 0.2);
+  color: #C4B5FD;
+  border-color: rgba(139, 92, 246, 0.4);
+}
+
+[data-theme="dark"] .faq-category-badge.badge-maintenance {
+  background: rgba(245, 158, 11, 0.2);
+  color: #FCD34D;
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+[data-theme="dark"] .faq-category-badge.badge-emergency {
+  background: rgba(239, 68, 68, 0.2);
+  color: #FCA5A5;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.faq-question-title {
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--black);
+}
+
+[data-theme="dark"] .faq-question-title {
+  color: #FFFFFF;
 }
 
 .faq-list {
@@ -3035,6 +3649,37 @@ section {
   border-color: #374151;
 }
 
+/* Service Area Recharts Bar Chart Card */
+.service-area-chart-card {
+  transition: all 0.3s ease;
+}
+
+.service-area-chart-card:hover {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .service-area-chart-card {
+  background: #161B22 !important;
+  border-color: #2D3748 !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.service-area-chart-card .recharts-responsive-container {
+  font-family: inherit;
+}
+
+.service-area-chart-card .recharts-cartesian-grid line {
+  stroke-opacity: 0.8;
+}
+
+.service-area-chart-card .recharts-bar-rectangle {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.service-area-chart-card .recharts-bar-rectangle:hover path {
+  opacity: 0.95;
+}
+
 [data-theme="dark"] .area-item:hover {
   background: var(--primary);
   color: #111111;
@@ -3058,6 +3703,197 @@ footer::before {
   right: 0;
   height: 4px;
   background: linear-gradient(90deg, transparent, var(--primary), transparent);
+}
+
+/* === FOOTER SOCIAL SHOWCASE SECTION === */
+.footer-social-showcase {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 32px 36px;
+  margin-bottom: 50px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(8px);
+}
+
+.footer-social-showcase::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #1877F2, #E1306C, #00F2FE);
+}
+
+.footer-social-header {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 28px;
+}
+
+.footer-social-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 4px 14px;
+  border-radius: 9999px;
+  background: rgba(255, 214, 10, 0.15);
+  color: #FFD60A;
+  margin-bottom: 10px;
+  border: 1px solid rgba(255, 214, 10, 0.3);
+}
+
+.footer-social-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin-bottom: 8px;
+}
+
+.footer-social-desc {
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+}
+
+.footer-social-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.footer-social-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.footer-social-card.card-facebook:hover {
+  background: rgba(24, 119, 242, 0.15);
+  border-color: rgba(24, 119, 242, 0.5);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(24, 119, 242, 0.25);
+}
+
+.footer-social-card.card-instagram:hover {
+  background: rgba(225, 48, 108, 0.15);
+  border-color: rgba(225, 48, 108, 0.5);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(225, 48, 108, 0.25);
+}
+
+.footer-social-card.card-tiktok:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+}
+
+.social-card-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.footer-social-card:hover .social-card-icon {
+  transform: scale(1.1) rotate(-4deg);
+}
+
+.facebook-icon {
+  background: #1877F2;
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(24, 119, 242, 0.4);
+}
+
+.instagram-icon {
+  background: linear-gradient(45deg, #F58529, #DD2A7B, #8134AF, #515BD4);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(221, 42, 123, 0.4);
+}
+
+.tiktok-icon {
+  background: #000000;
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: -2px -2px 8px rgba(0, 242, 254, 0.3), 2px 2px 8px rgba(254, 44, 85, 0.3);
+}
+
+.social-card-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.social-card-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.platform-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: #FFFFFF;
+}
+
+.social-verified-badge {
+  color: #38BDF8;
+  font-size: 12px;
+}
+
+.social-handle {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.social-action-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #FFD60A;
+  transition: gap 0.2s ease;
+}
+
+.footer-social-card:hover .social-action-cta {
+  gap: 8px;
+}
+
+@media (max-width: 900px) {
+  .footer-social-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .footer-social-showcase {
+    padding: 24px 20px;
+  }
 }
 
 .footer-grid {
